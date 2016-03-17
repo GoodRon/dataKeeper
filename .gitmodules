@@ -1,3 +1,6 @@
 [submodule "libMsgPack"]
 	path = libMsgPack
 	url = git@iron:libMsgPack
+[submodule "libZmqIpc"]
+	path = libZmqIpc
+	url = git@iron:libZmqIpc
