@@ -6,7 +6,13 @@
 #ifndef KEEPERAPPLICATION_H
 #define KEEPERAPPLICATION_H
 
+#include <memory>
+
 #include "Application.h"
+
+namespace ipc {
+    class fdnotify_recv;
+}
 
 /**
  * @brief Класс приложения dataKeeper
@@ -29,6 +35,11 @@ protected:
      * @brief Логика приложения
      **/
     virtual void logic();
+
+private:
+    std::unique_ptr<ipc::fdnotify_recv> m_ipc;
+
+    bool m_isRunning;
 };
 
 #endif // KEEPERAPPLICATION_H

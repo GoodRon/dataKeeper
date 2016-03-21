@@ -10,11 +10,19 @@ if(NOT DEFINED LIB_DIR)
     set(LIB_DIR "lib")
 endif()
 
+if(NOT DEFINED BIN_DIR)
+    set(BIN_DIR "bin")
+endif()
+
 include_directories(include)
 include_directories(libMsgPack)
+include_directories(libZmqIpc/include)
+include_directories(libZmqIpc/src)
 
 add_subdirectory(libMsgPack)
 add_subdirectory(libZmqIpc)
 
-set(SOURCE_FILES main.cpp KeeperApplication.h KeeperApplication.cpp)
+set(SOURCE_FILES main.cpp KeeperApplication.h KeeperApplication.cpp AbstractDatabase.cpp AbstractDatabase.h include/config.h)
 add_executable(dataKeeper ${SOURCE_FILES})
+
+install(TARGETS dataKeeper RUNTIME DESTINATION ${BIN_DIR})

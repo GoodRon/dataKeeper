@@ -3,8 +3,7 @@
  * Incom inc Tomsk Russia http://incom.tomsk.ru/
  */
 
-#include "KeeperApplication.h"
-#include "ipc_fdnotify_recv.h"
+#ifndef DATAKEEPER_CONFIG_H
+#define DATAKEEPER_CONFIG_H
 
-
-
+#endif //DATAKEEPER_CONFIG_H

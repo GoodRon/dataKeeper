@@ -3,8 +3,4 @@
  * Incom inc Tomsk Russia http://incom.tomsk.ru/
  */
 
-#include "KeeperApplication.h"
-#include "ipc_fdnotify_recv.h"
-
-
-
+#include "AbstractDatabase.h"
