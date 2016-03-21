@@ -4,3 +4,6 @@
 [submodule "libZmqIpc"]
 	path = libZmqIpc
 	url = git@iron:libZmqIpc
+[submodule "sqlitepp"]
+	path = sqlitepp
+	url = git@iron:sqlitepp
