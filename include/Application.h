@@ -7,12 +7,19 @@
 #define APPLICATION_H
 
 #include <string>
+#include <memory>
 
 /**
  * @brief Абстрактный класс приложения
  **/
 class Application {
 public:
+    static Application* getInstance() {
+        if (!m_instance) {
+            m_instance.reset(new Application());
+        }
+    }
+
     /**
      * @brief Конструктор
      **/
@@ -62,6 +69,9 @@ protected:
 	 * @brief Код возврата
 	 */
     int m_returnCode;
+
+private:
+    static std::unique_ptr<Application> m_instance;
 };
 
 #endif // APPLICATION_H

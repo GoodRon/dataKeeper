@@ -8,18 +8,24 @@
 
 #include <memory>
 
-#include "Application.h"
+#include "ipc_fdnotify_recv.h"
 
-namespace ipc {
-    class fdnotify_recv;
-}
+class package;
 
 /**
  * @brief Класс приложения dataKeeper
  *
  **/
-class KeeperApplication: public Application {
+class KeeperApplication {
 public:
+    static KeeperApplication& getInstance() {
+        static KeeperApplication instance;
+        return instance;
+    }
+
+    int execute() noexcept;
+
+private:
     /**
      * @brief Конструктор
      **/
@@ -28,18 +34,38 @@ public:
     /**
      * @brief Деструктор
      **/
-    virtual ~KeeperApplication();
+    ~KeeperApplication();
 
-protected:
     /**
-     * @brief Логика приложения
+     * @brief Конструктор копирования
+     *
+     * @param other
      **/
-    virtual void logic();
+    KeeperApplication(const KeeperApplication& other) = delete;
+
+    /**
+     * @brief Оператор присваивания
+     *
+     * @param other
+     * @return Application&
+     **/
+    KeeperApplication& operator=(const KeeperApplication& other) = delete;
+
+    void processIpcMsg(const ipc::msg_t& data);
+
+    void dispatchMsgPack(const package& data);
 
 private:
+    bool m_isRunning;
+
+    /**
+	 * @brief Код возврата
+	 */
+    int m_returnCode;
+
     std::unique_ptr<ipc::fdnotify_recv> m_ipc;
 
-    bool m_isRunning;
+    int m_ipcFd;
 };
 
 #endif // KEEPERAPPLICATION_H

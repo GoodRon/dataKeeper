@@ -24,5 +24,6 @@ add_subdirectory(libZmqIpc)
 
 set(SOURCE_FILES main.cpp KeeperApplication.h KeeperApplication.cpp AbstractDatabase.cpp AbstractDatabase.h include/config.h)
 add_executable(dataKeeper ${SOURCE_FILES})
+target_link_libraries(dataKeeper ZmqIpc)
 
 install(TARGETS dataKeeper RUNTIME DESTINATION ${BIN_DIR})
