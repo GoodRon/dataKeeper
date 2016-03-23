@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(dataKeeper)
 
-set(PROGRAM_NAME "dataKeeper")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake/")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 add_definitions(-Wall -Wextra)
@@ -19,11 +19,13 @@ include_directories(libMsgPack)
 include_directories(libZmqIpc/include)
 include_directories(libZmqIpc/src)
 
-add_subdirectory(libMsgPack)
-add_subdirectory(libZmqIpc)
+#add_subdirectory(libMsgPack)
+#add_subdirectory(libZmqIpc)
 
-set(SOURCE_FILES main.cpp KeeperApplication.h KeeperApplication.cpp AbstractDatabase.cpp AbstractDatabase.h include/config.h)
-add_executable(dataKeeper ${SOURCE_FILES})
-target_link_libraries(dataKeeper ZmqIpc)
+add_subdirectory(tests)
 
-install(TARGETS dataKeeper RUNTIME DESTINATION ${BIN_DIR})
+#set(SOURCE_FILES main.cpp KeeperApplication.h KeeperApplication.cpp AbstractDatabase.cpp AbstractDatabase.h include/config.h)
+#add_executable(dataKeeper ${SOURCE_FILES})
+#target_link_libraries(dataKeeper ZmqIpc)
+
+#install(TARGETS dataKeeper RUNTIME DESTINATION ${BIN_DIR})
