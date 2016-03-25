@@ -1,6 +1,0 @@
-CREATE TABLE IF NOT EXISTS messages(mid INTEGER PRIMARY KEY AUTOINCREMENT,
-    source INTEGER NOT NULL, sa INTEGER, da INTEGER,
-    type INTEGER NOT NULL, create_time INTEGER NOT NULL, io_time INTEGER,
-    exec_status BOOLEAN, status INTEGER NOT NULL, channel TEXT, data BLOB);
-
-CREATE TABLE IF NOT EXISTS settings();
