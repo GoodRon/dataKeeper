@@ -23,6 +23,8 @@ public:
             m_status(status), m_channel(channel) {
     }
 
+    ~Message() {}
+
     unsigned long getMid() const {
         return m_mid;
     }

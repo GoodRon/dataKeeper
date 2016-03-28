@@ -80,11 +80,11 @@ create_database (int& argc, char* argv[])
     c->execute ("PRAGMA foreign_keys=ON");
   }
 #elif defined(DATABASE_PGSQL)
-  database db = new odb::pgsql::database (argc, argv);
+  database* db = new odb::pgsql::database (argc, argv);
 #elif defined(DATABASE_ORACLE)
-  database db = new odb::oracle::database (argc, argv);
+  database* db = new odb::oracle::database (argc, argv);
 #elif defined(DATABASE_MSSQL)
-  database db = new odb::mssql::database (argc, argv);
+  database* db = new odb::mssql::database (argc, argv);
 #endif
 
   return db;

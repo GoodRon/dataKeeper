@@ -10,6 +10,8 @@ if(ODB_SQLITE_FOUND AND NOT ODB_PGSQL_FOUND AND NOT ODB_MYSQL_FOUND)
     message(FATAL_ERROR "Neither mysql nor sqlite and nor pqsql odb module was found")
 endif()
 
+# SQLITE
+
 set(TEST_SOURCES
         database_plugin.cpp)
 
@@ -36,36 +38,129 @@ endif()
 
 odb_compile(TEST_SOURCES
         FILES ${TEST_ODB_HEADERS}
-        #MULTI_DATABASE dynamic
+        MULTI_DATABASE dynamic
         DB ${TEST_DBS}
         GENERATE_QUERY
         GENERATE_SCHEMA
         SCHEMA_FORMAT embedded
         STANDARD c++11)
 
-add_library(libdbplugin SHARED ${TEST_SOURCES})
+add_library(libdbplugin_sqlite SHARED ${TEST_SOURCES})
 
-target_link_libraries(libdbplugin
+target_link_libraries(libdbplugin_sqlite
         odb odb-sqlite)
 #        ${ODB_LIBRARIES})
 
-target_include_directories(libdbplugin SYSTEM
+target_include_directories(libdbplugin_sqlite SYSTEM
         PRIVATE
         ${ODB_INCLUDE_DIRS}
         ${ODB_COMPILE_OUTPUT_DIR})
 
-target_compile_options(libdbplugin
+target_compile_options(libdbplugin_sqlite
         PRIVATE
         -Wall -Wextra -pedantic
         -fno-strict-aliasing -std=gnu++11 -fPIC)
 
-target_compile_definitions(libdbplugin
+target_compile_definitions(libdbplugin_sqlite
         PRIVATE ${TEST_DEFS})
 
-set_target_properties(libdbplugin PROPERTIES
+set_target_properties(libdbplugin_sqlite PROPERTIES
         PREFIX "")
 
-add_executable(plugins_test plugins_test.cpp)
+# PGSQL
+
+set(TEST_SOURCES
+        database_plugin.cpp)
+
+set(TEST_ODB_HEADERS
+        message.hxx)
+
+set(TEST_DEFS)
+set(TEST_DBS)
+
+if(ODB_PGSQL_FOUND)
+    list(APPEND TEST_DEFS DATABASE_PGSQL)
+    list(APPEND TEST_DBS pgsql)
+endif()
+
+odb_compile(TEST_SOURCES
+        FILES ${TEST_ODB_HEADERS}
+        MULTI_DATABASE dynamic
+        DB ${TEST_DBS}
+        GENERATE_QUERY
+        GENERATE_SCHEMA
+        SCHEMA_FORMAT sql
+        STANDARD c++11)
+
+add_library(libdbplugin_pgsql SHARED ${TEST_SOURCES})
+
+target_link_libraries(libdbplugin_pgsql
+        odb odb-pgsql)
+
+target_include_directories(libdbplugin_pgsql SYSTEM
+        PRIVATE
+        ${ODB_INCLUDE_DIRS}
+        ${ODB_COMPILE_OUTPUT_DIR})
+
+target_compile_options(libdbplugin_pgsql
+        PRIVATE
+        -Wall -Wextra -pedantic
+        -fno-strict-aliasing -std=gnu++11 -fPIC)
+
+target_compile_definitions(libdbplugin_pgsql
+        PRIVATE ${TEST_DEFS})
+
+set_target_properties(libdbplugin_pgsql PROPERTIES
+        PREFIX "")
+
+# MYSQL
+
+set(TEST_SOURCES
+        database_plugin.cpp)
+
+set(TEST_ODB_HEADERS
+        message.hxx)
+
+set(TEST_DEFS)
+set(TEST_DBS)
+
+if(ODB_MYSQL_FOUND)
+    list(APPEND TEST_DEFS DATABASE_MYSQL)
+    list(APPEND TEST_DBS mysql)
+endif()
+
+odb_compile(TEST_SOURCES
+        FILES ${TEST_ODB_HEADERS}
+        MULTI_DATABASE dynamic
+        DB ${TEST_DBS}
+        GENERATE_QUERY
+        GENERATE_SCHEMA
+        SCHEMA_FORMAT sql
+        STANDARD c++11)
+
+add_library(libdbplugin_mysql SHARED ${TEST_SOURCES})
+
+target_link_libraries(libdbplugin_mysql
+        odb odb-mysql)
+
+target_include_directories(libdbplugin_mysql SYSTEM
+        PRIVATE
+        ${ODB_INCLUDE_DIRS}
+        ${ODB_COMPILE_OUTPUT_DIR})
+
+target_compile_options(libdbplugin_mysql
+        PRIVATE
+        -Wall -Wextra -pedantic
+        -fno-strict-aliasing -std=gnu++11 -fPIC)
+
+target_compile_definitions(libdbplugin_mysql
+        PRIVATE ${TEST_DEFS})
+
+set_target_properties(libdbplugin_mysql PROPERTIES
+        PREFIX "")
+
+
+add_executable(plugins_test plugins_test.cpp odb_gen/message_odb.cpp)
 target_link_libraries(plugins_test odb dl)
 
 target_include_directories(plugins_test SYSTEM
