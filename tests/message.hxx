@@ -13,6 +13,13 @@
 #pragma db object
 class Message {
 public:
+    /**
+	 * @brief Конструктор
+     *
+     * @param unsigned long mid
+     * @param string source
+     * @param
+	 */
     Message(unsigned long mid, const std::string& source,
             unsigned long sa, unsigned long da, int type,
             unsigned long create_time, unsigned long io_time,

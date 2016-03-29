@@ -19,13 +19,13 @@ include_directories(libMsgPack)
 include_directories(libZmqIpc/include)
 include_directories(libZmqIpc/src)
 
-#add_subdirectory(libMsgPack)
-#add_subdirectory(libZmqIpc)
+add_subdirectory(libMsgPack)
+add_subdirectory(libZmqIpc)
 
-add_subdirectory(tests)
+#add_subdirectory(tests)
 
-#set(SOURCE_FILES main.cpp KeeperApplication.h KeeperApplication.cpp AbstractDatabase.cpp AbstractDatabase.h include/config.h)
-#add_executable(dataKeeper ${SOURCE_FILES})
-#target_link_libraries(dataKeeper ZmqIpc)
+set(SOURCE_FILES main.cpp KeeperApplication.h KeeperApplication.cpp)
+add_executable(dataKeeper ${SOURCE_FILES})
+target_link_libraries(dataKeeper ZmqIpc MsgPack)
 
-#install(TARGETS dataKeeper RUNTIME DESTINATION ${BIN_DIR})
+install(TARGETS dataKeeper RUNTIME DESTINATION ${BIN_DIR})
