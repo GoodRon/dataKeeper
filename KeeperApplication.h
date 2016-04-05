@@ -11,9 +11,12 @@
 
 #include "ipc_const.h"
 
-class package;
 namespace ipc {
     class fdnotify_recv;
+}
+
+namespace MsgPack {
+    class MsgPackVariantMap;
 }
 
 /**
@@ -73,16 +76,16 @@ private:
     /**
      * @brief Обработать межпроцессное сообщение
      *
-     * @param data данные
+     * @param msg сообщение
      */
-    void processIpcMsg(const ipc::msg_t& data);
+    void processIpcMsg(const ipc::msg_t& msg);
 
     /**
      * @brief Передать сообщение адресату
      *
      * @param data данные
      */
-    void dispatchMsgPack(const package& data);
+    void dispatchMsg(MsgPack::MsgPackVariantMap& data);
 
 private:
     /**

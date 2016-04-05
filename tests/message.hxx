@@ -16,9 +16,16 @@ public:
     /**
 	 * @brief Конструктор
      *
-     * @param unsigned long mid
-     * @param string source
-     * @param
+     * @param mid
+     * @param source
+     * @param sa
+     * @param da
+     * @param type
+     * @param create_time
+     * @param io_time
+     * @param exec_status
+     * @param status
+     * @param channel
 	 */
     Message(unsigned long mid, const std::string& source,
             unsigned long sa, unsigned long da, int type,

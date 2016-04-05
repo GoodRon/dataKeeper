@@ -4,16 +4,30 @@
  */
 
 #include <string>
+#include <ipc_const.h>
 
 #include <sys/select.h>
 
+#include "common.h"
+#include "ipc_msgpack.h"
+#include "MsgPackVariant.h"
+#include "MsgPackVariantMap.h"
+#include "MsgPack_unpack.h"
 #include "KeeperApplication.h"
 #include "ipc_fdnotify_recv.h"
 
 using namespace std;
 using namespace ipc;
+using namespace MsgPack;
 
 const string ipcSock = "/tmp/keeper_ipc";
+
+/**
+ * @brief Перечисление параметров обязательной секции
+ */
+enum MsgPackKey {
+    mpkDatabase = 0
+};
 
 int KeeperApplication::execute() noexcept {
     m_isRunning = true;
@@ -53,10 +67,36 @@ KeeperApplication::KeeperApplication() :
 KeeperApplication::~KeeperApplication() {
 }
 
-void KeeperApplication::processIpcMsg(const ipc::msg_t& data) {
+void KeeperApplication::processIpcMsg(const ipc::msg_t& msg) {
+    switch (msg.cmd) {
+        case IpcCmd_Msgpack: {
+            // Транслируем пришедшую по IPC последовательность байт в мэп значений MsgPack
+            MsgPack::package pckg(msg.data.begin(), msg.data.end());
+            MsgPack::MsgPackVariant msgpack;
+            msgpack.setPackage(pckg);
 
+            bool result = false;
+            auto msgMap = msgpack.toMap(&result);
+            // Если не можем преобразовать к мэпу - игнорируем
+            if (!result) {
+                break;
+            }
+
+            // Диспетчеризация сообщения к соответствующему плагину
+            dispatchMsg(msgMap);
+        } break;
+        default:
+            break;
+    }
 }
 
-void KeeperApplication::dispatchMsgPack(const package &data) {
+void KeeperApplication::dispatchMsg(MsgPackVariantMap& data) {
+    // Если нет обязательного параметра БД - игнорируем
+    if (!data.contain(static_cast<int>(mpkDatabase))) {
+        return;
+    }
 
+    string databaseName = data[mpkDatabase].toString();
+
+    // далее диспетчиризация по плагинам
 }
