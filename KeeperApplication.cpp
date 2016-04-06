@@ -60,6 +60,11 @@ bool KeeperApplication::loadDatabasePlugins(const string& jsonConf) {
         auto database = plugins[index].get("database", "").asString();
         auto type = plugins[index].get("type", "").asString();
 
+        string path = database + "_" + type + ".so";
+        DbPluginHandler plugin;
+        if (loadDatabasePlugin(path, plugin)) {
+            m_databasePlugins[database] = plugin;
+        }
     }
     return true;
 }
@@ -96,7 +101,8 @@ KeeperApplication::KeeperApplication() :
         m_isRunning(false),
         m_returnCode(0),
         m_ipc(new fdnotify_recv(ipcSock.c_str(), "dataKeeper")),
-        m_ipcFd(m_ipc->GetFd()) {
+        m_ipcFd(m_ipc->GetFd()),
+        m_databasePlugins() {
 }
 
 KeeperApplication::~KeeperApplication() {
