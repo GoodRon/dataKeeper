@@ -5,8 +5,11 @@
 
 #include <string>
 #include <ipc_const.h>
+#include <stdio.h>
+#include <dlfcn.h>
 
 #include <sys/select.h>
+#include <jsoncpp/json/json.h>
 
 #include "common.h"
 #include "ipc_msgpack.h"
@@ -15,6 +18,7 @@
 #include "MsgPack_unpack.h"
 #include "KeeperApplication.h"
 #include "ipc_fdnotify_recv.h"
+#include "DbPluginHandler.hxx"
 
 using namespace std;
 using namespace ipc;
@@ -28,6 +32,37 @@ const string ipcSock = "/tmp/keeper_ipc";
 enum MsgPackKey {
     mpkDatabase = 0
 };
+
+bool KeeperApplication::loadDatabasePlugins(const string& jsonConf) {
+    ifstream jsonFile;
+    jsonFile.open(jsonConf);
+    if (!jsonFile.good()) {
+//        cerr << "Can't open json file " << jsonConf << endl;
+        return false;
+    }
+
+    string line;
+    string jsonContent;
+    while (getline(jsonFile, line)) {
+        jsonContent += line;
+    }
+
+    Json::Value root;
+    Json::Reader reader;
+
+    if (!reader.parse(jsonContent, root)) {
+//        cerr << "Can't parse json from " << jsonConf << endl;
+        return false;
+    }
+
+    Json::Value plugins = root["plugins"];
+    for (int index = 0; static_cast<size_t>(index) < plugins.size(); ++index) {
+        auto database = plugins[index].get("database", "").asString();
+        auto type = plugins[index].get("type", "").asString();
+
+    }
+    return true;
+}
 
 int KeeperApplication::execute() noexcept {
     m_isRunning = true;
@@ -65,6 +100,25 @@ KeeperApplication::KeeperApplication() :
 }
 
 KeeperApplication::~KeeperApplication() {
+}
+
+bool KeeperApplication::loadDatabasePlugin(const std::string& path, DbPluginHandler& plugin) {
+    DbPluginHandler newPlugin;
+
+    newPlugin.path = path;
+    newPlugin.handle = dlopen(path.c_str(), RTLD_LAZY);
+    if (!newPlugin.handle) {
+        return false;
+    }
+
+    newPlugin.databaseInstantiator = reinterpret_cast<pluginIface>(
+            dlsym(newPlugin.handle, "returnDatabase"));
+    if (!newPlugin.databaseInstantiator) {
+        return false;
+    }
+
+    plugin = newPlugin;
+    return true;
 }
 
 void KeeperApplication::processIpcMsg(const ipc::msg_t& msg) {

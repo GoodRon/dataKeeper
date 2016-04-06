@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <atomic>
+#include <map>
 
 #include "ipc_const.h"
 
@@ -18,6 +19,8 @@ namespace ipc {
 namespace MsgPack {
     class MsgPackVariantMap;
 }
+
+class DbPluginHandler;
 
 /**
  * @brief Класс приложения dataKeeper. Синглтон
@@ -81,6 +84,8 @@ private:
      **/
     KeeperApplication& operator=(const KeeperApplication& other) = delete;
 
+    bool loadDatabasePlugin(const std::string& path, DbPluginHandler& plugin);
+
     /**
      * @brief Обработать межпроцессное сообщение
      *
@@ -115,6 +120,11 @@ private:
 	 * @brief Дескриптор оповещения о приходе межпроцессного сообщения
 	 */
     int m_ipcFd;
+
+    /**
+	 * @brief Мэп плагинов к базам данных
+	 */
+    std::map<std::string, DbPluginHandler> m_databasePlugins;
 };
 
 #endif // KEEPERAPPLICATION_H

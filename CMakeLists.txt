@@ -32,8 +32,8 @@ add_subdirectory(libZmqIpc)
 
 #add_subdirectory(tests)
 
-set(SOURCE_FILES main.cpp KeeperApplication.h KeeperApplication.cpp)
+set(SOURCE_FILES main.cpp KeeperApplication.h KeeperApplication.cpp DbPluginHandler.hxx)
 add_executable(dataKeeper ${SOURCE_FILES})
-target_link_libraries(dataKeeper ZmqIpc libMsgPack)
+target_link_libraries(dataKeeper jsoncpp dl ZmqIpc libMsgPack)
 
 install(TARGETS dataKeeper RUNTIME DESTINATION ${BIN_DIR})
