@@ -90,13 +90,14 @@ void KeeperApplication::processIpcMsg(const ipc::msg_t& msg) {
     }
 }
 
-void KeeperApplication::dispatchMsg(MsgPackVariantMap& data) {
+void KeeperApplication::dispatchMsg(const MsgPackVariantMap& data) {
     // Если нет обязательного параметра БД - игнорируем
     if (!data.contain(static_cast<int>(mpkDatabase))) {
         return;
     }
 
-    string databaseName = data[mpkDatabase].toString();
+    auto var = data.at(mpkDatabase);
+    string databaseName = var.toString();
 
     // далее диспетчиризация по плагинам
 }

@@ -36,6 +36,14 @@ public:
     }
 
     /**
+     * @brief Загрузить плагины для работы С БД из json-конфига
+     *
+     * @param jsonConf конфигурационный файл
+     * @return bool
+     **/
+    bool loadDatabasePlugins(const std::string& jsonConf);
+
+    /**
      * @brief Метод для запуска основной логики приложения
      *
      * @return int код возврата
@@ -85,7 +93,7 @@ private:
      *
      * @param data данные
      */
-    void dispatchMsg(MsgPack::MsgPackVariantMap& data);
+    void dispatchMsg(const MsgPack::MsgPackVariantMap& data);
 
 private:
     /**
