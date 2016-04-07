@@ -20,19 +20,13 @@
 #include "ipc_fdnotify_recv.h"
 #include "DbPluginHandler.hxx"
 #include "AbstractConnection.hxx"
+#include "MsgPackProto.hxx"
 
 using namespace std;
 using namespace ipc;
 using namespace MsgPack;
 
 const string ipcSock = "/tmp/keeper_ipc";
-
-/**
- * @brief Перечисление параметров обязательной секции
- */
-enum MsgPackKey {
-    mpkDatabase = 0
-};
 
 bool KeeperApplication::loadDatabasePlugins(const string& jsonConf) {
     ifstream jsonFile;
@@ -162,44 +156,91 @@ void KeeperApplication::processIpcMsg(const ipc::msg_t& msg) {
     switch (msg.cmd) {
         case IpcCmd_Msgpack: {
             // Транслируем пришедшую по IPC последовательность байт в мэп значений MsgPack
-            MsgPack::package pckg(msg.data.begin(), msg.data.end());
-            MsgPack::MsgPackVariant msgpack;
+            package pckg(msg.data.begin(), msg.data.end());
+            MsgPackVariant msgpack;
             msgpack.setPackage(pckg);
 
-            bool result = false;
-            auto msgMap = msgpack.toMap(&result);
+            bool ret = false;
+            auto request = msgpack.toMap(&ret);
             // Если не можем преобразовать к мэпу - игнорируем
-            if (!result) {
+            if (!ret) {
                 break;
             }
 
-            // Диспетчеризация сообщения к соответствующему плагину
-            dispatchMsg(msgMap);
+            // Обработка сообщения соответствующим плагином
+            MsgPackVariantMap result;
+            executeRequest(request, result);
+            if (result.empty()) {
+                break;
+            }
+
+            // Отправка ответа
+            auto package = result.getPackage();
+            busipc_client::RawData data(package.begin(), package.end());
+            m_ipc->SendRep(msg.cmd, msg.id, msg.sa, data);
         } break;
         default:
             break;
     }
 }
 
-void KeeperApplication::dispatchMsg(const MsgPackVariantMap& request) {
-    // Если нет обязательного параметра БД - игнорируем
-    if (!request.contain(static_cast<int>(mpkDatabase))) {
+void KeeperApplication::executeRequest(const MsgPackVariantMap &message,
+                                       MsgPackVariantMap &answer) {
+    // Если тип пакета не тот - игнорируем
+    if (!message.contain(static_cast<int>(mppPacketType))) {
         return;
     }
 
-    auto value = request.at(mpkDatabase);
-    string database = value.toString();
+    auto value = message.at(mppPacketType);
+    if (value.toString() != "Database") {
+        return;
+    }
 
+    // Добываем служебную дополнительную секцию
+    if (!message.contain(static_cast<int>(mppAdditionalSection))) {
+        return;
+    }
+
+    value = message.at(mppAdditionalSection);
+    bool ret = false;
+    auto request = value.toMap(&ret);
+    // Если не можем преобразовать к мэпу - игнорируем
+    if (!ret) {
+        return;
+    }
+
+    // Если не указана база данных - игнорируем
+    if (!request.contain("database")) {
+        return;
+    }
+
+    // Добываем название базы данных
+    value = request.at("database");
+    auto database = value.toString();
+
+    // Открываем соединение
     if (!openConnection(database)) {
         return;
     }
 
-    MsgPackVariantMap answer;
-    m_connectionsCache[database]->processQuery(request, answer);
+    MsgPackVariantMap result;
+    m_connectionsCache[database]->processQuery(message, result);
 
-    if (answer.empty()) {
+    // Ответа не будет
+    if (result.empty()) {
         return;
     }
 
-    // TODO возврат ответа
+    // Формируем ответ
+    answer[mppPacketType] = message[mppPacketType];
+    if (message.contain(static_cast<int>(mppDestination))) {
+        answer[mppSource] = message[mppDestination];
+    }
+    if (message.contain(static_cast<int>(mppSource))) {
+        answer[mppDestination] = message[mppSource];
+    }
+    if (message.contain(static_cast<int>(mppSource))) {
+        answer[mppID] = message[mppID];
+    }
+    answer[mppAdditionalSection] = MsgPackVariant(result);
 }

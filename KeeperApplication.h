@@ -115,11 +115,13 @@ private:
     void processIpcMsg(const ipc::msg_t& msg);
 
     /**
-     * @brief Передать сообщение адресату
+     * @brief Выполнить запрос
      *
-     * @param data данные
+     * @param message пакет запроса
+     * @param answer пакет ответа
      */
-    void dispatchMsg(const MsgPack::MsgPackVariantMap& request);
+    void executeRequest(const MsgPack::MsgPackVariantMap &message,
+                        MsgPack::MsgPackVariantMap &answer);
 
 private:
     /**
