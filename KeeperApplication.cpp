@@ -19,6 +19,7 @@
 #include "KeeperApplication.h"
 #include "ipc_fdnotify_recv.h"
 #include "DbPluginHandler.hxx"
+#include "AbstractConnection.hxx"
 
 using namespace std;
 using namespace ipc;
@@ -57,13 +58,16 @@ bool KeeperApplication::loadDatabasePlugins(const string& jsonConf) {
 
     Json::Value plugins = root["plugins"];
     for (int index = 0; static_cast<size_t>(index) < plugins.size(); ++index) {
-        auto database = plugins[index].get("database", "").asString();
-        auto type = plugins[index].get("type", "").asString();
-
-        string path = database + "_" + type + ".so";
         DbPluginHandler plugin;
-        if (loadDatabasePlugin(path, plugin)) {
-            m_databasePlugins[database] = plugin;
+        plugin.jsonConf = plugins[index].asString();
+        plugin.database = plugins[index].get("database", "").asString();
+        plugin.type = plugins[index].get("type", "").asString();
+
+        // TODO полный путь
+        plugin.path = plugin.database + "_" + plugin.type + ".so";
+
+        if (loadDatabasePlugin(plugin)) {
+            m_databasePlugins[plugin.database] = plugin;
         }
     }
     return true;
@@ -81,7 +85,7 @@ int KeeperApplication::execute() noexcept {
     m_isRunning = true;
 
     fd_set fds;
-    timeval tv;
+//    timeval tv;
     msg_t message;
 
     while (m_isRunning) {
@@ -110,29 +114,47 @@ KeeperApplication::KeeperApplication() :
         m_returnCode(0),
         m_ipc(new fdnotify_recv(ipcSock.c_str(), "dataKeeper")),
         m_ipcFd(m_ipc->GetFd()),
-        m_databasePlugins() {
+        m_databasePlugins(),
+        m_connectionsCache() {
 }
 
 KeeperApplication::~KeeperApplication() {
     unloadDatabasePlugins();
 }
 
-bool KeeperApplication::loadDatabasePlugin(const std::string& path, DbPluginHandler& plugin) {
-    DbPluginHandler newPlugin;
-
-    newPlugin.path = path;
-    newPlugin.handle = dlopen(path.c_str(), RTLD_LAZY);
-    if (!newPlugin.handle) {
+bool KeeperApplication::loadDatabasePlugin(DbPluginHandler& plugin) {
+    plugin.handle = dlopen(plugin.path.c_str(), RTLD_LAZY);
+    if (!plugin.handle) {
         return false;
     }
 
-    newPlugin.connectionInstantiator = reinterpret_cast<pluginIface>(
-            dlsym(newPlugin.handle, "returnDatabase"));
-    if (!newPlugin.connectionInstantiator) {
+    plugin.connectionInstantiator = reinterpret_cast<pluginIface>(
+            dlsym(plugin.handle, "returnDatabase"));
+    if (!plugin.connectionInstantiator) {
+        return false;
+    }
+    return true;
+}
+
+bool KeeperApplication::openConnection(const std::string& database) {
+    // Если соединение уже есть в кэше
+    if (m_connectionsCache.find(database) == m_connectionsCache.end()) {
+        return true;
+    }
+
+    // Если нет плагина для этой базы данных
+    if (m_databasePlugins.find(database) == m_databasePlugins.end()) {
         return false;
     }
 
-    plugin = newPlugin;
+    auto handler = m_databasePlugins[database];
+    AbstractConnection* connection = handler.connectionInstantiator(handler.jsonConf.c_str());
+    if (!connection) {
+        return false;
+    }
+
+    shared_ptr<AbstractConnection> ptr(connection);
+    m_connectionsCache[database] = ptr;
     return true;
 }
 
@@ -159,18 +181,25 @@ void KeeperApplication::processIpcMsg(const ipc::msg_t& msg) {
     }
 }
 
-void KeeperApplication::dispatchMsg(const MsgPackVariantMap& data) {
+void KeeperApplication::dispatchMsg(const MsgPackVariantMap& request) {
     // Если нет обязательного параметра БД - игнорируем
-    if (!data.contain(static_cast<int>(mpkDatabase))) {
+    if (!request.contain(static_cast<int>(mpkDatabase))) {
         return;
     }
 
-    auto var = data.at(mpkDatabase);
-    string databaseName = var.toString();
+    auto value = request.at(mpkDatabase);
+    string database = value.toString();
 
-    // далее диспетчеризация по плагинам
-    // TODO write it
+    if (!openConnection(database)) {
+        return;
+    }
 
+    MsgPackVariantMap answer;
+    m_connectionsCache[database]->processQuery(request, answer);
 
+    if (answer.empty()) {
+        return;
+    }
 
+    // TODO возврат ответа
 }

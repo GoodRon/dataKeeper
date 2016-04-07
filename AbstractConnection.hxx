@@ -8,7 +8,9 @@
 
 #include <string>
 
-class MsgPackVariantMap;
+namespace MsgPack {
+    class MsgPackVariantMap;
+}
 
 class AbstractConnection {
 public:
@@ -16,7 +18,8 @@ public:
 
     virtual ~AbstractConnection() = 0;
 
-    virtual bool processQuery(const MsgPackVariantMap& request, MsgPackVariantMap& answer) = 0;
+    virtual bool processQuery(const MsgPack::MsgPackVariantMap& request,
+                              MsgPack::MsgPackVariantMap& answer) = 0;
 
 private:
     std::string m_jsonConf;

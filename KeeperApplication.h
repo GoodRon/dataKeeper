@@ -9,6 +9,7 @@
 #include <memory>
 #include <atomic>
 #include <map>
+#include <functional>
 
 #include "ipc_const.h"
 
@@ -21,6 +22,7 @@ namespace MsgPack {
 }
 
 class DbPluginHandler;
+class AbstractConnection;
 
 /**
  * @brief Класс приложения dataKeeper. Синглтон
@@ -92,11 +94,18 @@ private:
     /**
      * @brief Загрузить плагин работы с базой данных
      *
-     * @param path путь к плагину
      * @param plugin описатель плагина
      * @return bool
      */
-    bool loadDatabasePlugin(const std::string& path, DbPluginHandler& plugin);
+    bool loadDatabasePlugin(DbPluginHandler& plugin);
+
+    /**
+     * @brief Открыть соединение с базой данных
+     *
+     * @param database имя базы данных
+     * @return bool
+     */
+    bool openConnection(const std::string& database);
 
     /**
      * @brief Обработать межпроцессное сообщение
@@ -110,7 +119,7 @@ private:
      *
      * @param data данные
      */
-    void dispatchMsg(const MsgPack::MsgPackVariantMap& data);
+    void dispatchMsg(const MsgPack::MsgPackVariantMap& request);
 
 private:
     /**
@@ -137,6 +146,11 @@ private:
 	 * @brief Мэп плагинов к базам данных
 	 */
     std::map<std::string, DbPluginHandler> m_databasePlugins;
+
+    /**
+	 * @brief Кэш соединений к базам данных
+	 */
+    std::map<std::string, std::shared_ptr<AbstractConnection>> m_connectionsCache;
 };
 
 #endif // KEEPERAPPLICATION_H

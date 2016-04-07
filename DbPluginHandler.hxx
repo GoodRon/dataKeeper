@@ -11,12 +11,23 @@
 
 #include "DatabasePlugin.h"
 
+typedef std::function<AbstractConnection*(const char*)> ConnectionInstantiator;
+
 struct DbPluginHandler {
+    DbPluginHandler(): path(), database(), type(), jsonConf(), handle(nullptr),
+                       connectionInstantiator() {}
+
     std::string path;
+
+    std::string database;
+
+    std::string type;
+
+    std::string jsonConf;
 
     void *handle;
 
-    std::function<AbstractConnection*(const char*)> connectionInstantiator;
+    ConnectionInstantiator connectionInstantiator;
 };
 
 #endif // DBPLUGINHANDLER_HXX
