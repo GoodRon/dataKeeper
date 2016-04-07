@@ -69,6 +69,14 @@ bool KeeperApplication::loadDatabasePlugins(const string& jsonConf) {
     return true;
 }
 
+void KeeperApplication::unloadDatabasePlugins() {
+    for (auto& connection: m_databasePlugins) {
+        // TODO check return value
+        dlclose(connection.second.handle);
+    }
+    m_databasePlugins.clear();
+}
+
 int KeeperApplication::execute() noexcept {
     m_isRunning = true;
 
@@ -106,6 +114,7 @@ KeeperApplication::KeeperApplication() :
 }
 
 KeeperApplication::~KeeperApplication() {
+    unloadDatabasePlugins();
 }
 
 bool KeeperApplication::loadDatabasePlugin(const std::string& path, DbPluginHandler& plugin) {
@@ -117,9 +126,9 @@ bool KeeperApplication::loadDatabasePlugin(const std::string& path, DbPluginHand
         return false;
     }
 
-    newPlugin.databaseInstantiator = reinterpret_cast<pluginIface>(
+    newPlugin.connectionInstantiator = reinterpret_cast<pluginIface>(
             dlsym(newPlugin.handle, "returnDatabase"));
-    if (!newPlugin.databaseInstantiator) {
+    if (!newPlugin.connectionInstantiator) {
         return false;
     }
 
@@ -159,5 +168,9 @@ void KeeperApplication::dispatchMsg(const MsgPackVariantMap& data) {
     auto var = data.at(mpkDatabase);
     string databaseName = var.toString();
 
-    // далее диспетчиризация по плагинам
+    // далее диспетчеризация по плагинам
+    // TODO write it
+
+
+
 }

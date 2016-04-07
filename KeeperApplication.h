@@ -47,6 +47,11 @@ public:
     bool loadDatabasePlugins(const std::string& jsonConf);
 
     /**
+     * @brief Выгрузить все плагины для работы с БД
+     **/
+    void unloadDatabasePlugins();
+
+    /**
      * @brief Метод для запуска основной логики приложения
      *
      * @return int код возврата
@@ -84,6 +89,13 @@ private:
      **/
     KeeperApplication& operator=(const KeeperApplication& other) = delete;
 
+    /**
+     * @brief Загрузить плагин работы с базой данных
+     *
+     * @param path путь к плагину
+     * @param plugin описатель плагина
+     * @return bool
+     */
     bool loadDatabasePlugin(const std::string& path, DbPluginHandler& plugin);
 
     /**

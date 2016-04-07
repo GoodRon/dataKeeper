@@ -9,16 +9,14 @@
 #include <string>
 #include <functional>
 
-class database;
-
-typedef database*(*pluginIface)(int, char**);
+#include "DatabasePlugin.h"
 
 struct DbPluginHandler {
     std::string path;
 
     void *handle;
 
-    std::function<database*(int, char**)> databaseInstantiator;
+    std::function<AbstractConnection*(const char*)> connectionInstantiator;
 };
 
 #endif // DBPLUGINHANDLER_HXX
