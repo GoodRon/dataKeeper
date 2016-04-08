@@ -184,6 +184,7 @@ void KeeperApplication::processIpcMsg(const ipc::msg_t& msg) {
     }
 }
 
+// TODO alert about bad packet
 void KeeperApplication::executeRequest(const MsgPackVariantMap &message,
                                        MsgPackVariantMap &answer) {
     // Если тип пакета не тот - игнорируем

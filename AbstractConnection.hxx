@@ -7,9 +7,14 @@
 #define ABSTRACT_CONNECTION_HXX
 
 #include <string>
+#include <memory>
 
 namespace MsgPack {
     class MsgPackVariantMap;
+}
+
+namespace odb {
+    class database;
 }
 
 class AbstractConnection {
@@ -21,8 +26,10 @@ public:
     virtual bool processQuery(const MsgPack::MsgPackVariantMap& request,
                               MsgPack::MsgPackVariantMap& answer) = 0;
 
-private:
+protected:
     std::string m_jsonConf;
+
+    std::shared_ptr<odb::database> m_database;
 };
 
 #endif // ABSTRACT_CONNECTION_HXX

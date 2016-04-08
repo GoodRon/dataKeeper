@@ -18,6 +18,7 @@ if(NOT DEFINED BIN_DIR)
     set(BIN_DIR "bin")
 endif()
 
+include_directories(.)
 include_directories(include)
 include_directories(libMsgPack)
 include_directories(libMsgPack/common)
@@ -32,8 +33,7 @@ add_subdirectory(libZmqIpc)
 
 #add_subdirectory(tests)
 
-set(SOURCE_FILES main.cpp KeeperApplication.h KeeperApplication.cpp DbPluginHandler.hxx AbstractConnection.hxx
-        DatabasePlugin.h MsgPackProto.hxx)
+set(SOURCE_FILES main.cpp KeeperApplication.cpp)
 add_executable(dataKeeper ${SOURCE_FILES})
 target_link_libraries(dataKeeper jsoncpp dl ZmqIpc libMsgPack)
 
