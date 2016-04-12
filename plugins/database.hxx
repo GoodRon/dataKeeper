@@ -6,6 +6,9 @@
 #ifndef DATAKEEPER_DATABASE_HXX
 #define DATAKEEPER_DATABASE_HXX
 
+#include <string>
+#include <vector>
+
 #if defined(DATABASE_MYSQL)
 #  include <odb/mysql/database.hxx>
 #elif defined(DATABASE_SQLITE)
@@ -23,11 +26,19 @@
 #  error unknown database; did you forget to define the DATABASE_* macros?
 #endif
 
-inline odb::database* create_database (int argc, char** argv) {
+inline odb::database* create_database (const std::vector<std::string> cmdline) {
     using namespace std;
     using namespace odb::core;
 
     database* db = nullptr;
+
+    char **argv = (char**)alloca((cmdline.size() + 1)*(sizeof(char*)));
+    int argc = 0;
+    for (; argc < cmdline.size(); ++argc) {
+        argv[argc] = const_cast<char*>(cmdline[argc].c_str());
+    }
+    argv[argc] = nullptr;
+    --argc;
 
 #if defined(DATABASE_MYSQL)
     db = new odb::mysql::database (argc, argv);

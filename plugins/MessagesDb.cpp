@@ -12,16 +12,14 @@
 
 #include "MessagesDb.hxx"
 #include "MsgPackVariantMap.h"
+#include "jsonConfigHelper.hxx"
 
 using namespace MsgPack;
 
 MessagesDb::MessagesDb(const std::string &jsonConf):
     AbstractConnection(jsonConf) {
 
-
-    auto db = create_database();
-    m_database.reset(db);
-
+    instantiateDatabase();
 }
 
 MessagesDb::~MessagesDb() {
@@ -30,5 +28,19 @@ MessagesDb::~MessagesDb() {
 
 bool MessagesDb::processQuery(const MsgPackVariantMap &request,
                               MsgPackVariantMap &answer) {
+    if (!m_database) {
+        return false;
+    }
 
+
+}
+
+void MessagesDb::instantiateDatabase() {
+    std::vector<std::string> args;
+    if (!jsonToCmdLine(m_jsonConf, args)) {
+        return;
+    }
+
+    auto db = create_database(args);
+    m_database.reset(db);
 }

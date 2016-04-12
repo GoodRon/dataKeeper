@@ -28,6 +28,9 @@ public:
                               MsgPack::MsgPackVariantMap& answer) = 0;
 
 protected:
+    virtual void instantiateDatabase() = 0;
+
+protected:
     std::string m_jsonConf;
 
     std::shared_ptr<odb::database> m_database;

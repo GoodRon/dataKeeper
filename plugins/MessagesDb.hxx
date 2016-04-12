@@ -19,8 +19,8 @@ public:
     virtual bool processQuery(const MsgPack::MsgPackVariantMap& request,
                               MsgPack::MsgPackVariantMap& answer);
 
-private:
-
+protected:
+    virtual void instantiateDatabase();
 };
 
 #endif // MESSAGESDB_HXX

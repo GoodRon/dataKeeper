@@ -11,7 +11,7 @@ bool sqliteParser(const std::string& json, std::vector<std::string>& args) {
     Json::Value root;
     Json::Reader reader;
 
-    if (!reader.parse(jsonContent, root)) {
+    if (!reader.parse(json, root)) {
         return false;
     }
 
@@ -61,7 +61,7 @@ bool jsonToCmdLine(const std::string& json, std::vector<std::string>& args) {
     Json::Value root;
     Json::Reader reader;
 
-    if (!reader.parse(jsonContent, root)) {
+    if (!reader.parse(json, root)) {
         return false;
     }
 
