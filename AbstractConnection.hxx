@@ -19,7 +19,8 @@ namespace odb {
 
 class AbstractConnection {
 public:
-    AbstractConnection(const std::string& jsonConf): m_jsonConf(jsonConf) {}
+    AbstractConnection(const std::string& jsonConf): m_jsonConf(jsonConf),
+                                                     m_database() {}
 
     virtual ~AbstractConnection() = 0;
 
