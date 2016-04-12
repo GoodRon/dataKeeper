@@ -10,11 +10,11 @@
 
 #include "AbstractConnection.hxx"
 
-class MessagesDb: public AbstractConnection {
+class MessagesConnection : public AbstractConnection {
 public:
-    MessagesDb(const std::string& jsonConf);
+    MessagesConnection(const std::string& jsonConf);
 
-    virtual ~MessagesDb();
+    virtual ~MessagesConnection();
 
     virtual bool processQuery(const MsgPack::MsgPackVariantMap& request,
                               MsgPack::MsgPackVariantMap& answer);

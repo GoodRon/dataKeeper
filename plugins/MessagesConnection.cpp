@@ -10,24 +10,24 @@
 #include "message.hxx"
 #include "message_odb.h"
 
-#include "MessagesDb.hxx"
+#include "MessagesConnection.hxx"
 #include "MsgPackVariantMap.h"
 #include "jsonConfigHelper.hxx"
 
 using namespace MsgPack;
 
-MessagesDb::MessagesDb(const std::string &jsonConf):
+MessagesConnection::MessagesConnection(const std::string &jsonConf):
     AbstractConnection(jsonConf) {
 
     instantiateDatabase();
 }
 
-MessagesDb::~MessagesDb() {
+MessagesConnection::~MessagesConnection() {
 
 }
 
-bool MessagesDb::processQuery(const MsgPackVariantMap &request,
-                              MsgPackVariantMap &answer) {
+bool MessagesConnection::processQuery(const MsgPackVariantMap &request,
+                                      MsgPackVariantMap &answer) {
     if (!m_database) {
         return false;
     }
@@ -35,7 +35,7 @@ bool MessagesDb::processQuery(const MsgPackVariantMap &request,
 
 }
 
-void MessagesDb::instantiateDatabase() {
+void MessagesConnection::instantiateDatabase() {
     std::vector<std::string> args;
     if (!jsonToCmdLine(m_jsonConf, args)) {
         return;

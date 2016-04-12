@@ -19,7 +19,7 @@ foreach(database pgsql sqlite mysql)
     endif()
 
     set(ODB_HEADERS message.hxx)
-    set(PLUGIN_SOURCES MessagesDb.cpp MessagesPlugin.cpp)
+    set(PLUGIN_SOURCES MessagesConnection.cpp MessagesPlugin.cpp)
 
     odb_compile(PLUGIN_SOURCES
             FILES ${ODB_HEADERS}

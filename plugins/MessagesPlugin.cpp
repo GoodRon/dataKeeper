@@ -4,12 +4,12 @@
  */
 
 #include "DatabasePlugin.h"
-#include "MessagesDb.hxx"
+#include "MessagesConnection.hxx"
 
 extern "C" {
 
 AbstractConnection* openConnection(const char *jsonConf) {
-    return new MessagesDb(jsonConf);
+    return new MessagesConnection(jsonConf);
 }
 
 }
