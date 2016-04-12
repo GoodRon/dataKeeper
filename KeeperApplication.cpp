@@ -3,6 +3,8 @@
  * Incom inc Tomsk Russia http://incom.tomsk.ru/
  */
 
+#include <iostream>
+
 #include <string>
 #include <ipc_const.h>
 #include <stdio.h>
@@ -32,7 +34,7 @@ bool KeeperApplication::loadDatabasePlugins(const string& jsonConf) {
     ifstream jsonFile;
     jsonFile.open(jsonConf);
     if (!jsonFile.good()) {
-//        cerr << "Can't open json file " << jsonConf << endl;
+        cerr << "Can't open json file " << jsonConf << endl;
         return false;
     }
 
@@ -46,19 +48,20 @@ bool KeeperApplication::loadDatabasePlugins(const string& jsonConf) {
     Json::Reader reader;
 
     if (!reader.parse(jsonContent, root)) {
-//        cerr << "Can't parse json from " << jsonConf << endl;
+        cerr << "Can't parse json from " << jsonConf << endl;
         return false;
     }
 
     Json::Value plugins = root["plugins"];
     for (int index = 0; static_cast<size_t>(index) < plugins.size(); ++index) {
         DbPluginHandler plugin;
-        plugin.jsonConf = plugins[index].asString();
+        cout << "part of json config: " << plugins[index].toStyledString() << endl;
+        plugin.jsonConf = plugins[index].toStyledString();
         plugin.database = plugins[index].get("database", "").asString();
         plugin.type = plugins[index].get("type", "").asString();
 
         // TODO полный путь
-        plugin.path = plugin.database + "_" + plugin.type + ".so";
+        plugin.path = "lib" + plugin.database + "db_" + plugin.type + ".so";
 
         if (loadDatabasePlugin(plugin)) {
             m_databasePlugins[plugin.database] = plugin;
@@ -119,12 +122,14 @@ KeeperApplication::~KeeperApplication() {
 bool KeeperApplication::loadDatabasePlugin(DbPluginHandler& plugin) {
     plugin.handle = dlopen(plugin.path.c_str(), RTLD_LAZY);
     if (!plugin.handle) {
+        cerr << "Can't dlopen " << plugin.path << endl;
         return false;
     }
 
     plugin.connectionInstantiator = reinterpret_cast<pluginIface>(
-            dlsym(plugin.handle, "returnDatabase"));
+            dlsym(plugin.handle, "openConnection"));
     if (!plugin.connectionInstantiator) {
+        cerr << "Can't instantiate plugin " << endl;
         return false;
     }
     return true;

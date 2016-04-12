@@ -13,5 +13,6 @@ int main() {
     cout << "Hello, Keeper!" << endl;
 
     KeeperApplication& instance = KeeperApplication::getInstance();
+    instance.loadDatabasePlugins("plugins_conf.json");
     return instance.execute();
 }
