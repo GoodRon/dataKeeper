@@ -7,6 +7,7 @@
 #define MESSAGE_H
 
 #include <string>
+#include <vector>
 
 #include <odb/core.hxx>
 
@@ -16,7 +17,6 @@ public:
     /**
 	 * @brief Конструктор
      *
-     * @param mid
      * @param source
      * @param sa
      * @param da
@@ -26,15 +26,18 @@ public:
      * @param exec_status
      * @param status
      * @param channel
+     * @param data
 	 */
-    Message(unsigned long mid, const std::string& source,
+    Message(const std::string& source,
             unsigned long sa, unsigned long da, int type,
             unsigned long create_time, unsigned long io_time,
-            bool exec_status, int status, const std::string& channel):
-            m_mid(mid), m_source(source), m_sa(sa), m_da(da),
+            bool exec_status, int status, const std::string& channel,
+            const std::vector<uint8_t>& data):
+
+            m_mid(), m_source(source), m_sa(sa), m_da(da),
             m_type(type), m_create_time(create_time),
             m_io_time(io_time), m_exec_status(exec_status),
-            m_status(status), m_channel(channel) {
+            m_status(status), m_channel(channel), m_data(data) {
     }
 
     ~Message() {}
@@ -63,7 +66,13 @@ private:
     bool m_exec_status;
     int m_status;
     std::string m_channel;
-    // data
+//
+//#if defined(DATABASE_PGSQL)
+//#pragma db type("BYTEA")
+//#else
+//#pragma db type("BLOB")
+//#endif
+    std::vector<uint8_t> m_data;
 };
 
 #endif // MESSAGE_H

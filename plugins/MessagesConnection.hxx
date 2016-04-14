@@ -21,6 +21,9 @@ public:
 
 protected:
     virtual void instantiateDatabase();
+
+private:
+    bool insertMessage(const MsgPack::MsgPackVariantMap& request);
 };
 
 #endif // MESSAGESDB_HXX

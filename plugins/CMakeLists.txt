@@ -42,7 +42,7 @@ foreach(database pgsql sqlite mysql)
             PRIVATE
             -Wall -Wextra -pedantic
             -fno-strict-aliasing -std=gnu++11 -fPIC
-            -Wno-pragmas)
+            -Wno-unknown-pragmas)
     target_compile_definitions(${PLUGIN_NAME}
             PRIVATE ${DATABASE_DEFS})
 endforeach(database)

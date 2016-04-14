@@ -4,7 +4,7 @@ project(dataKeeper)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake/")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-add_definitions(-Wall -Wextra -Wno-pragmas)
+add_definitions(-Wall -Wextra -Wno-unknown-pragmas)
 
 if(NOT DEFINED SHARED_LIB_DIR)
     set(SHARED_LIB_DIR "lib")
@@ -32,7 +32,7 @@ add_subdirectory(libMsgPack)
 add_subdirectory(libZmqIpc)
 add_subdirectory(plugins)
 
-#add_subdirectory(tests)
+add_subdirectory(tests)
 
 set(SOURCE_FILES main.cpp KeeperApplication.cpp)
 add_executable(dataKeeper ${SOURCE_FILES})

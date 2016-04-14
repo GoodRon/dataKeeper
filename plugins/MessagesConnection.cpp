@@ -32,7 +32,19 @@ bool MessagesConnection::processQuery(const MsgPackVariantMap &request,
         return false;
     }
 
+    if (!request.contain("request")) {
+        return false;
+    }
 
+//    auto type =
+//    if (request["request"].toString() == "insert") {
+//
+//    }
+//
+//
+//    Message message();
+
+    return true;
 }
 
 void MessagesConnection::instantiateDatabase() {
