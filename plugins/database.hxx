@@ -34,7 +34,7 @@ inline odb::database* create_database (const std::vector<std::string> cmdline) {
 
     char **argv = (char**)alloca((cmdline.size() + 1)*(sizeof(char*)));
     int argc = 0;
-    for (; argc < cmdline.size(); ++argc) {
+    for (; static_cast<unsigned>(argc) < cmdline.size(); ++argc) {
         argv[argc] = const_cast<char*>(cmdline[argc].c_str());
     }
     argv[argc] = nullptr;

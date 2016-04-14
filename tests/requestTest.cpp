@@ -7,6 +7,7 @@
 #include <string>
 #include <chrono>
 
+#include "ipc_const.h"
 #include "ipc_fdnotify_recv.h"
 #include "ipc_msgpack.h"
 #include "MsgPackVariantMap.h"
@@ -18,10 +19,10 @@ using namespace chrono;
 using namespace MsgPack;
 using namespace ipc;
 
-const string ipcSock = "/tmp/keeper_ipc";
+//const string ipcSock = "/tmp/keeper_ipc";
 
 int main() {
-    fdnotify_recv ipc(ipcSock.c_str(), "requestTest");
+    fdnotify_recv ipc(SOCK_DEFAULT, "requestTest");
 
     MsgPackVariantMap msg;
     msg[mppPacketType] = "Database";
@@ -48,6 +49,7 @@ int main() {
 
     auto package = msg.getPackage();
     busipc_client::RawData data(package.begin(), package.end());
-    ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data);
+
+    cout << ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data) << endl;
     return 0;
 }

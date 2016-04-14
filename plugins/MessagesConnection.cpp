@@ -3,6 +3,8 @@
  * Incom inc Tomsk Russia http://incom.tomsk.ru/
  */
 
+#include <iostream>
+
 #include <odb/database.hxx>
 #include <odb/transaction.hxx>
 
@@ -12,9 +14,12 @@
 
 #include "MessagesConnection.hxx"
 #include "MsgPackVariantMap.h"
+#include "MsgPackVariant.h"
 #include "jsonConfigHelper.hxx"
 
+using namespace std;
 using namespace MsgPack;
+using namespace odb;
 
 MessagesConnection::MessagesConnection(const std::string &jsonConf):
     AbstractConnection(jsonConf) {
@@ -28,6 +33,8 @@ MessagesConnection::~MessagesConnection() {
 
 bool MessagesConnection::processQuery(const MsgPackVariantMap &request,
                                       MsgPackVariantMap &answer) {
+    cout << "Message has been translated to MessagesPlugin" << endl;
+
     if (!m_database) {
         return false;
     }
@@ -36,15 +43,13 @@ bool MessagesConnection::processQuery(const MsgPackVariantMap &request,
         return false;
     }
 
-//    auto type =
-//    if (request["request"].toString() == "insert") {
-//
-//    }
-//
-//
-//    Message message();
+    if (request["request"].toString() == "insert") {
+        return insertMessage(request);
+    }
 
-    return true;
+
+
+    return false;
 }
 
 void MessagesConnection::instantiateDatabase() {
@@ -55,4 +60,19 @@ void MessagesConnection::instantiateDatabase() {
 
     auto db = create_database(args);
     m_database.reset(db);
+}
+
+bool MessagesConnection::insertMessage(const MsgPack::MsgPackVariantMap& request) {
+    cout << "Message has been proceeded" << endl;
+
+    Message message(request["source"].toString(), request["sa"].toInt64(),
+                    request["da"].toInt64(), request["type"].toInt32(),
+                    request["create_time"].toInt64(), request["io_time"].toInt64(),
+                    request["exec_status"].toBool(), request["status"].toInt32(),
+                    request["channel"].toString(), request["data"].toBin());
+
+    transaction t(m_database->begin());
+    m_database->persist(message);
+    t.commit();
+    return true;
 }

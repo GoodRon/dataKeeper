@@ -32,7 +32,7 @@ public:
             unsigned long sa, unsigned long da, int type,
             unsigned long create_time, unsigned long io_time,
             bool exec_status, int status, const std::string& channel,
-            const std::vector<uint8_t>& data):
+            const std::vector<char>& data):
 
             m_mid(), m_source(source), m_sa(sa), m_da(da),
             m_type(type), m_create_time(create_time),
@@ -72,7 +72,7 @@ private:
 //#else
 //#pragma db type("BLOB")
 //#endif
-    std::vector<uint8_t> m_data;
+    std::vector<char> m_data;
 };
 
 #endif // MESSAGE_H

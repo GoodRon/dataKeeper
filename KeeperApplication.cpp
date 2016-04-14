@@ -15,6 +15,7 @@
 
 #include "common.h"
 #include "ipc_msgpack.h"
+#include "ipc_const.h"
 #include "MsgPackVariant.h"
 #include "MsgPackVariantMap.h"
 #include "MsgPack_unpack.h"
@@ -28,7 +29,7 @@ using namespace std;
 using namespace ipc;
 using namespace MsgPack;
 
-const string ipcSock = "/tmp/keeper_ipc";
+//const string ipcSock = "/tmp/keeper_ipc";
 
 bool KeeperApplication::loadDatabasePlugins(const string& jsonConf) {
     ifstream jsonFile;
@@ -109,7 +110,7 @@ void KeeperApplication::brake() {
 KeeperApplication::KeeperApplication() :
         m_isRunning(false),
         m_returnCode(0),
-        m_ipc(new fdnotify_recv(ipcSock.c_str(), "dataKeeper")),
+        m_ipc(new fdnotify_recv(SOCK_DEFAULT, "dataKeeper")),
         m_ipcFd(m_ipc->GetFd()),
         m_databasePlugins(),
         m_connectionsCache() {
@@ -137,18 +138,21 @@ bool KeeperApplication::loadDatabasePlugin(DbPluginHandler& plugin) {
 
 bool KeeperApplication::openConnection(const std::string& database) {
     // Если соединение уже есть в кэше
-    if (m_connectionsCache.find(database) == m_connectionsCache.end()) {
+    if (m_connectionsCache.find(database) != m_connectionsCache.end()) {
+        cerr << database << " in cache" << endl;
         return true;
     }
 
     // Если нет плагина для этой базы данных
     if (m_databasePlugins.find(database) == m_databasePlugins.end()) {
+        cerr << database << " no plugin" << endl;
         return false;
     }
 
     auto handler = m_databasePlugins[database];
     AbstractConnection* connection = handler.connectionInstantiator(handler.jsonConf.c_str());
     if (!connection) {
+        cerr << database << " can't instantiate connection" << endl;
         return false;
     }
 
@@ -158,6 +162,8 @@ bool KeeperApplication::openConnection(const std::string& database) {
 }
 
 void KeeperApplication::processIpcMsg(const ipc::msg_t& msg) {
+    cout << "Message has been received" << endl;
+
     switch (msg.cmd) {
         case IpcCmd_Msgpack: {
             // Транслируем пришедшую по IPC последовательность байт в мэп значений MsgPack
@@ -169,6 +175,7 @@ void KeeperApplication::processIpcMsg(const ipc::msg_t& msg) {
             auto request = msgpack.toMap(&ret);
             // Если не можем преобразовать к мэпу - игнорируем
             if (!ret) {
+                cout << "Can't cast to map" << endl;
                 break;
             }
 
@@ -194,43 +201,53 @@ void KeeperApplication::executeRequest(const MsgPackVariantMap &message,
                                        MsgPackVariantMap &answer) {
     // Если тип пакета не тот - игнорируем
     if (!message.contain(static_cast<int>(mppPacketType))) {
+        cout << "Wrong type" << endl;
         return;
     }
 
-    auto value = message.at(mppPacketType);
-    if (value.toString() != "Database") {
+    if (message.at(mppPacketType).toString() != "Database") {
+        cout << "Wrong adresse" << endl;
         return;
     }
 
     // Добываем служебную дополнительную секцию
     if (!message.contain(static_cast<int>(mppAdditionalSection))) {
+        cout << "No additional section" << endl;
         return;
     }
 
-    value = message.at(mppAdditionalSection);
+    auto value = message.at(mppAdditionalSection);
     bool ret = false;
     auto request = value.toMap(&ret);
     // Если не можем преобразовать к мэпу - игнорируем
     if (!ret) {
+        cout << "Can't cast additional section to map" << endl;
         return;
     }
 
     // Если не указана база данных - игнорируем
-    if (!request.contain("database")) {
+    if (!request.contain("table")) {
+        cout << "No database" << endl;
         return;
     }
 
     // Добываем название базы данных
-    value = request.at("database");
-    auto database = value.toString();
+    auto database = request.at("table").toString();
+
+    cout << "Trying to open connection" << endl;
 
     // Открываем соединение
     if (!openConnection(database)) {
+        cout << "Can't open connection" << endl;
         return;
     }
 
+    cout << "Processing request" << endl;
+
     MsgPackVariantMap result;
     m_connectionsCache[database]->processQuery(message, result);
+
+    cout << "Done!" << endl;
 
     // Ответа не будет
     if (result.empty()) {

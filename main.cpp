@@ -10,9 +10,9 @@
 using namespace std;
 
 int main() {
-    cout << "Hello, Keeper!" << endl;
-
     KeeperApplication& instance = KeeperApplication::getInstance();
+    cout << "Loading plugins" << endl;
     instance.loadDatabasePlugins("plugins_conf.json");
+    cout << "Plugins loaded" << endl;
     return instance.execute();
 }

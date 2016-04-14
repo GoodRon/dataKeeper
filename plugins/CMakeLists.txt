@@ -4,8 +4,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/")
 find_package(ODB REQUIRED OPTIONAL_COMPONENTS sqlite pgsql mysql)
 include(${ODB_USE_FILE})
 
-add_library(jsonConfigHelper STATIC jsonConfigHelper.cpp)
-target_link_libraries(jsonConfigHelper jsoncpp)
+#add_library(jsonConfigHelper SHARED jsonConfigHelper.cpp)
+#target_link_libraries(jsonConfigHelper jsoncpp)
 
 foreach(database pgsql sqlite mysql)
     set(DATABASE_DEFS)
@@ -19,7 +19,7 @@ foreach(database pgsql sqlite mysql)
     endif()
 
     set(ODB_HEADERS message.hxx)
-    set(PLUGIN_SOURCES MessagesConnection.cpp MessagesPlugin.cpp)
+    set(PLUGIN_SOURCES MessagesConnection.cpp MessagesPlugin.cpp jsonConfigHelper.cpp)
 
     odb_compile(PLUGIN_SOURCES
             FILES ${ODB_HEADERS}
@@ -33,7 +33,7 @@ foreach(database pgsql sqlite mysql)
     set(PLUGIN_NAME messagesdb_${database})
 
     add_library(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
-    target_link_libraries(${PLUGIN_NAME} odb odb-${database})
+    target_link_libraries(${PLUGIN_NAME} odb odb-${database} jsoncpp)
     target_include_directories(${PLUGIN_NAME} SYSTEM
             PRIVATE
             ${ODB_INCLUDE_DIRS}
