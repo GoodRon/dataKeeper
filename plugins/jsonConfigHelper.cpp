@@ -15,6 +15,9 @@ bool sqliteParser(const std::string& json, std::vector<std::string>& args) {
         return false;
     }
 
+    // Имя запускаемой программы
+    args.push_back("dataKeeper");
+
     auto filename = root.get("filename", "").asString();
     if (filename != "") {
         args.push_back("--database");

@@ -26,6 +26,8 @@
 #  error unknown database; did you forget to define the DATABASE_* macros?
 #endif
 
+#include <iostream>
+
 inline odb::database* create_database (const std::vector<std::string> cmdline) {
     using namespace std;
     using namespace odb::core;
@@ -38,7 +40,6 @@ inline odb::database* create_database (const std::vector<std::string> cmdline) {
         argv[argc] = const_cast<char*>(cmdline[argc].c_str());
     }
     argv[argc] = nullptr;
-    --argc;
 
 #if defined(DATABASE_MYSQL)
     db = new odb::mysql::database (argc, argv);

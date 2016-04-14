@@ -36,10 +36,12 @@ bool MessagesConnection::processQuery(const MsgPackVariantMap &request,
     cout << "Message has been translated to MessagesPlugin" << endl;
 
     if (!m_database) {
+        cout << "No instance for database" << endl;
         return false;
     }
 
     if (!request.contain("request")) {
+        cout << "No request" << endl;
         return false;
     }
 
@@ -55,10 +57,12 @@ bool MessagesConnection::processQuery(const MsgPackVariantMap &request,
 void MessagesConnection::instantiateDatabase() {
     std::vector<std::string> args;
     if (!jsonToCmdLine(m_jsonConf, args)) {
+        cout << "Can't cast jsonConf to cmdline" << endl;
         return;
     }
 
     auto db = create_database(args);
+    cout << "database was instantiated" << endl;
     m_database.reset(db);
 }
 
@@ -74,5 +78,20 @@ bool MessagesConnection::insertMessage(const MsgPack::MsgPackVariantMap& request
     transaction t(m_database->begin());
     m_database->persist(message);
     t.commit();
+
+    typedef odb::query<Message> query;
+    typedef odb::result<Message> result;
+
+
+    // TEST
+    transaction t2(m_database->begin ());
+
+    result r(m_database->query<Message> (query::mid > 0));
+
+    for (result::iterator i (r.begin ()); i != r.end (); ++i) {
+        cout << "Hello, " << i->getMid () << " " << i->getStatus() << "!" << endl;
+    }
+
+    t2.commit ();
     return true;
 }

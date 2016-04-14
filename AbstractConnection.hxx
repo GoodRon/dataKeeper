@@ -22,7 +22,7 @@ public:
     AbstractConnection(const std::string& jsonConf): m_jsonConf(jsonConf),
                                                      m_database() {}
 
-    virtual ~AbstractConnection() = 0;
+    virtual ~AbstractConnection() {}
 
     virtual bool processQuery(const MsgPack::MsgPackVariantMap& request,
                               MsgPack::MsgPackVariantMap& answer) = 0;

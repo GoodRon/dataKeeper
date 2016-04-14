@@ -5,8 +5,8 @@
       "type": "sqlite",
 
       "filename": "messages.db",
-      "create": "true",
-      "read only": "false",
+      "create": true,
+      "read only": false,
       "options file": ""
     }
   ]

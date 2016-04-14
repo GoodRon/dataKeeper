@@ -245,7 +245,7 @@ void KeeperApplication::executeRequest(const MsgPackVariantMap &message,
     cout << "Processing request" << endl;
 
     MsgPackVariantMap result;
-    m_connectionsCache[database]->processQuery(message, result);
+    m_connectionsCache[database]->processQuery(request, result);
 
     cout << "Done!" << endl;
 
