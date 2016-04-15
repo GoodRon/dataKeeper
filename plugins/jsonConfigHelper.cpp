@@ -7,11 +7,11 @@
 
 #include "jsonConfigHelper.hxx"
 
-bool sqliteParser(const std::string& json, std::vector<std::string>& args) {
+bool sqliteParser(const std::string& jsonConf, std::vector<std::string>& args) {
     Json::Value root;
     Json::Reader reader;
 
-    if (!reader.parse(json, root)) {
+    if (!reader.parse(jsonConf, root)) {
         return false;
     }
 
@@ -43,28 +43,28 @@ bool sqliteParser(const std::string& json, std::vector<std::string>& args) {
 }
 
 // TODO write me
-bool mysqlParser(const std::string& json, std::vector<std::string>& args) {
+bool mysqlParser(const std::string& jsonConf, std::vector<std::string>& args) {
 
     return true;
 }
 
 // TODO write me
-bool pgsqlParser(const std::string& json, std::vector<std::string>& args) {
+bool pgsqlParser(const std::string& jsonConf, std::vector<std::string>& args) {
 
     return true;
 }
 
 // TODO write me
-bool mssqlParser(const std::string& json, std::vector<std::string>& args) {
+bool mssqlParser(const std::string& jsonConf, std::vector<std::string>& args) {
 
     return true;
 }
 
-bool jsonToCmdLine(const std::string& json, std::vector<std::string>& args) {
+bool jsonToCmdLine(const std::string& jsonConf, std::vector<std::string>& args) {
     Json::Value root;
     Json::Reader reader;
 
-    if (!reader.parse(json, root)) {
+    if (!reader.parse(jsonConf, root)) {
         return false;
     }
 
@@ -76,15 +76,15 @@ bool jsonToCmdLine(const std::string& json, std::vector<std::string>& args) {
     bool ret = false;
 
     if (type == "sqlite") {
-        ret = sqliteParser(json, args);
+        ret = sqliteParser(jsonConf, args);
     }
 
     if (type == "mysql") {
-        ret = mysqlParser(json, args);
+        ret = mysqlParser(jsonConf, args);
     }
 
     if (type == "pgsql") {
-        ret = pgsqlParser(json, args);
+        ret = pgsqlParser(jsonConf, args);
     }
     return ret;
 }

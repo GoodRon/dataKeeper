@@ -9,6 +9,14 @@
 #include <string>
 #include <vector>
 
-bool jsonToCmdLine(const std::string& json, std::vector<std::string>& args);
+/**
+ * @brief Вспомогательная функция для перевода параметров конфигурационного
+ * json-файла в аргументы командной строки
+ *
+ * @param jsonConf Содержимое конфигурационного файла в формате json
+ * @param args вектор аргументов командной строки
+ * @return bool
+ **/
+bool jsonToCmdLine(const std::string& jsonConf, std::vector<std::string>& args);
 
 #endif //DATAKEEPER_JSONCONFIGHELPER_HXX

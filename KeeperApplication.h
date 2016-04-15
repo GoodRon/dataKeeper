@@ -26,7 +26,6 @@ class AbstractConnection;
 
 /**
  * @brief Класс приложения dataKeeper. Синглтон
- *
  **/
 class KeeperApplication {
 public:

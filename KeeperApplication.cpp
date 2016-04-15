@@ -29,8 +29,6 @@ using namespace std;
 using namespace ipc;
 using namespace MsgPack;
 
-//const string ipcSock = "/tmp/keeper_ipc";
-
 bool KeeperApplication::loadDatabasePlugins(const string& jsonConf) {
     ifstream jsonFile;
     jsonFile.open(jsonConf);

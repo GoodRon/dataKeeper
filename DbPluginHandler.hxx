@@ -13,20 +13,44 @@
 
 typedef std::function<AbstractConnection*(const char*)> ConnectionInstantiator;
 
+/**
+ * @brief Хендлер для плагина работы с базой данных
+ **/
 struct DbPluginHandler {
+    /**
+     * @brief Конструктор
+     **/
     DbPluginHandler(): path(), database(), type(), jsonConf(), handle(nullptr),
                        connectionInstantiator() {}
 
+    /**
+     * @brief Полный путь к файлу плагина
+     **/
     std::string path;
 
+    /**
+     * @brief Имя базы данных
+     **/
     std::string database;
 
+    /**
+     * @brief Тип базы данных
+     **/
     std::string type;
 
+    /**
+     * @brief Содержимое конфигурационного файла в формате json
+     **/
     std::string jsonConf;
 
+    /**
+     * @brief Хэндлер для библиотеки
+     **/
     void *handle;
 
+    /**
+     * @brief Функция для инстанциации соединения с базой данных
+     **/
     ConnectionInstantiator connectionInstantiator;
 };
 

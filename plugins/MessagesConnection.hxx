@@ -10,19 +10,39 @@
 
 #include "AbstractConnection.hxx"
 
+/**
+ * @brief Класс соединения с базой данных messages.db
+ **/
 class MessagesConnection : public AbstractConnection {
 public:
+    /**
+    * @brief Конструктор
+    *
+    * @param jsonConf содержание конфигурационного файла в формате json
+    **/
     MessagesConnection(const std::string& jsonConf);
 
+    /**
+     * @overload
+     */
     virtual ~MessagesConnection();
 
+    /**
+     * @overload
+     */
     virtual bool processQuery(const MsgPack::MsgPackVariantMap& request,
                               MsgPack::MsgPackVariantMap& answer);
 
 protected:
+    /**
+     * @overload
+     */
     virtual void instantiateDatabase();
 
 private:
+    /**
+     * @brief Обработать запрос на добавление сообщения в базу данных
+     */
     bool insertMessage(const MsgPack::MsgPackVariantMap& request);
 };
 

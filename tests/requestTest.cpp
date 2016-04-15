@@ -19,8 +19,6 @@ using namespace chrono;
 using namespace MsgPack;
 using namespace ipc;
 
-//const string ipcSock = "/tmp/keeper_ipc";
-
 int main() {
     fdnotify_recv ipc(SOCK_DEFAULT, "requestTest");
 
