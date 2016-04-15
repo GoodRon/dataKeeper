@@ -60,7 +60,8 @@ bool KeeperApplication::loadDatabasePlugins(const string& jsonConf) {
         plugin.type = plugins[index].get("type", "").asString();
 
         // TODO полный путь
-        plugin.path = "lib" + plugin.database + "db_" + plugin.type + ".so";
+        plugin.path = plugins[index].get("dir", "").asString() +
+                "lib" + plugin.database + "db_" + plugin.type + ".so";
 
         if (loadDatabasePlugin(plugin)) {
             m_databasePlugins[plugin.database] = plugin;

@@ -45,7 +45,7 @@ bool MessagesConnection::processQuery(const MsgPackVariantMap &request,
         return false;
     }
 
-    if (request["request"].toString() == "insert") {
+    if (request["request"].toString() == "insertMessage") {
         return insertMessage(request);
     }
 
@@ -68,6 +68,7 @@ void MessagesConnection::instantiateDatabase() {
 
 bool MessagesConnection::insertMessage(const MsgPack::MsgPackVariantMap& request) {
     cout << "Message has been proceeded" << endl;
+    cout << "data: " << request["data"].toString() << endl;
 
     Message message(request["source"].toString(), request["sa"].toInt64(),
                     request["da"].toInt64(), request["type"].toInt32(),

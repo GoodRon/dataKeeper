@@ -30,7 +30,7 @@ int main() {
 
     MsgPackVariantMap request;
     request["table"] = "messages";
-    request["request"] = "insert";
+    request["request"] = "insertMessage";
     request["source"] = "SourceObject";
     request["sa"] = 42;
     request["da"] = 17;
@@ -41,7 +41,7 @@ int main() {
     request["exec_status"] = true;
     request["status"] = 0;
     request["channel"] = "testChannel";
-    request["data"] = "";
+    request["data"] = "the long string for the testing purposes with no meaning";
 
     msg[mppAdditionalSection] = request;
 

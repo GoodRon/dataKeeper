@@ -45,4 +45,5 @@ foreach(database pgsql sqlite mysql)
             -Wno-unknown-pragmas)
     target_compile_definitions(${PLUGIN_NAME}
             PRIVATE ${DATABASE_DEFS})
+    install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION ${LIB_DIR})
 endforeach(database)

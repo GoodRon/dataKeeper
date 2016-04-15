@@ -1,6 +1,7 @@
 {
   "plugins": [
     {
+      "dir": "",
       "database": "messages",
       "type": "sqlite",
 
