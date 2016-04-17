@@ -28,6 +28,12 @@
 
 #include <iostream>
 
+/**
+ * @brief Функция для инициализации объекта для работы с базой данных
+ *
+ * @param cmdline параметры командной строки
+ * @return database*
+ */
 inline odb::database* create_database (const std::vector<std::string> cmdline) {
     using namespace std;
     using namespace odb::core;
