@@ -28,6 +28,7 @@ foreach(database pgsql sqlite mysql)
             GENERATE_QUERY
             GENERATE_SCHEMA
             SCHEMA_FORMAT embedded
+            SCHEMA_FORMAT sql
             STANDARD c++11)
 
     set(PLUGIN_NAME messagesdb_${database})

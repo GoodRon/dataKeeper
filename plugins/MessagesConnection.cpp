@@ -49,7 +49,7 @@ bool MessagesConnection::processQuery(const MsgPackVariantMap &request,
         return insertMessage(request);
     }
 
-
+    // to be continued
 
     return false;
 }
