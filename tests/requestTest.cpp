@@ -29,7 +29,7 @@ int main() {
     msg[mppID] = 1;
 
     MsgPackVariantMap request;
-    request["table"] = "messages";
+    request["database"] = "messages";
     request["request"] = "insertMessage";
     request["source"] = "SourceObject";
     request["sa"] = 42;

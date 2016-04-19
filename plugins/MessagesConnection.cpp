@@ -31,8 +31,8 @@ MessagesConnection::~MessagesConnection() {
 
 }
 
-bool MessagesConnection::processQuery(const MsgPackVariantMap &request,
-                                      MsgPackVariantMap &answer) {
+bool MessagesConnection::processQuery(const MsgPackVariantMap& request,
+                                      MsgPackVariantMap& answer) {
     cout << "Message has been translated to MessagesPlugin" << endl;
 
     if (!m_database) {
@@ -46,7 +46,11 @@ bool MessagesConnection::processQuery(const MsgPackVariantMap &request,
     }
 
     if (request["request"].toString() == "insertMessage") {
-        return insertMessage(request);
+        return insertMessage(request, answer);
+    }
+
+    if (request["request"].toString() == "selectMessage") {
+        return selectMessage(request, answer);
     }
 
     // to be continued
@@ -66,10 +70,8 @@ void MessagesConnection::instantiateDatabase() {
     m_database.reset(db);
 }
 
-bool MessagesConnection::insertMessage(const MsgPack::MsgPackVariantMap& request) {
-    cout << "Message has been proceeded" << endl;
-    cout << "data: " << request["data"].toString() << endl;
-
+bool MessagesConnection::insertMessage(const MsgPack::MsgPackVariantMap& request,
+                                       MsgPack::MsgPackVariantMap& answer) {
     Message message(request["source"].toString(), request["sa"].toInt64(),
                     request["da"].toInt64(), request["type"].toInt32(),
                     request["create_time"].toInt64(), request["io_time"].toInt64(),
@@ -77,22 +79,38 @@ bool MessagesConnection::insertMessage(const MsgPack::MsgPackVariantMap& request
                     request["channel"].toString(), request["data"].toBin());
 
     transaction t(m_database->begin());
-    m_database->persist(message);
+    auto mid = m_database->persist(message);
     t.commit();
 
+    answer["mid"] = mid;
+    return true;
+}
+
+bool MessagesConnection::selectMessage(const MsgPack::MsgPackVariantMap& request,
+                                       MsgPack::MsgPackVariantMap& answer) {
     typedef odb::query<Message> query;
     typedef odb::result<Message> result;
 
+    transaction t (m_database->begin ());
+    result r (m_database->query<Message> (query::mid == request["mid"].toInt32()));
 
-    // TEST
-    transaction t2(m_database->begin ());
+    cout << "requested mid = " << request["mid"].toInt32() << endl;
 
-    result r(m_database->query<Message> (query::mid > 0));
+    result::iterator i (r.begin ());
+    if (i != r.end()) {
+        cout << "something was found" << endl;
 
-    for (result::iterator i (r.begin ()); i != r.end (); ++i) {
-        cout << "Hello, " << i->getMid () << " " << i->getStatus() << "!" << endl;
+        answer["mid"] = i->getMid();
+        answer["source"] = i->getSource();
+        answer["sa"] = i->getSA();
+        answer["da"] = i->getDA();
+        answer["type"] = i->getType();
+        answer["create_time"] = i->getCreateTime();
+        answer["io_time"] = i->getIoTime();
+        answer["exec_status"] = i->getExecStatus();
+        answer["status"] = i->getStatus();
+        answer["channel"] = i->getChannel();
+        answer["data"] = i->getData();
     }
-
-    t2.commit ();
     return true;
 }

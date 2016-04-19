@@ -43,7 +43,11 @@ private:
     /**
      * @brief Обработать запрос на добавление сообщения в базу данных
      */
-    bool insertMessage(const MsgPack::MsgPackVariantMap& request);
+    bool insertMessage(const MsgPack::MsgPackVariantMap& request,
+                       MsgPack::MsgPackVariantMap& answer);
+
+    bool selectMessage(const MsgPack::MsgPackVariantMap& request,
+                       MsgPack::MsgPackVariantMap& answer);
 };
 
 #endif // MESSAGESDB_HXX

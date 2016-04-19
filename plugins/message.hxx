@@ -57,6 +57,34 @@ public:
         return m_mid;
     }
 
+    std::string getSource() const {
+        return m_source;
+    }
+
+    unsigned long getSA() const {
+        return m_sa;
+    }
+
+    unsigned long getDA() const {
+        return m_da;
+    }
+
+    int getType() const {
+        return m_type;
+    }
+
+    unsigned long getCreateTime() const {
+        return m_create_time;
+    }
+
+    unsigned long getIoTime() const {
+        return m_io_time;
+    }
+
+    bool getExecStatus() const {
+        return m_exec_status;
+    }
+
     /**
      * @brief Вернуть статус сообщения
      *
@@ -64,6 +92,14 @@ public:
      **/
     int getStatus() const {
         return m_status;
+    }
+
+    std::string getChannel() const {
+        return m_channel;
+    }
+
+    std::vector<char> getData() const {
+        return m_data;
     }
 
 private:

@@ -225,13 +225,13 @@ void KeeperApplication::executeRequest(const MsgPackVariantMap &message,
     }
 
     // Если не указана база данных - игнорируем
-    if (!request.contain("table")) {
+    if (!request.contain("database")) {
         cout << "No database" << endl;
         return;
     }
 
     // Добываем название базы данных
-    auto database = request.at("table").toString();
+    auto database = request.at("database").toString();
 
     cout << "Trying to open connection" << endl;
 
