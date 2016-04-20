@@ -188,11 +188,11 @@ private:
      */
     std::string m_channel;
 
-//#if defined(DATABASE_PGSQL)
-//#pragma db type("BYTEA")
-//#else
-//#pragma db type("BLOB")
-//#endif
+#ifdef DATABASE_PGSQL
+ #pragma db type("BYTEA")
+#else
+ #pragma db type("BLOB")
+#endif
     /**
      * @brief Данные
      */

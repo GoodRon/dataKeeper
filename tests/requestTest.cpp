@@ -13,6 +13,7 @@
 #include "MsgPackVariantMap.h"
 #include "MsgPackVariant.h"
 #include "MsgPackProto.hxx"
+#include "MsgPack_pack.h"
 
 using namespace std;
 using namespace chrono;
@@ -41,7 +42,9 @@ int main() {
     request["exec_status"] = true;
     request["status"] = 0;
     request["channel"] = "testChannel";
-    request["data"] = "the long string for the testing purposes with no meaning";
+
+    string str = "the long string for the testing purposes with no meaning";
+    request["data"] = pack::bin(str.c_str(), str.size() + 1);
 
     msg[mppAdditionalSection] = request;
 

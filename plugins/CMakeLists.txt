@@ -25,6 +25,7 @@ foreach(database pgsql sqlite mysql)
             FILES ${ODB_HEADERS}
             MULTI_DATABASE dynamic
             DB ${database}
+            DEFS ${DATABASE_DEFS}
             GENERATE_QUERY
             GENERATE_SCHEMA
             SCHEMA_FORMAT embedded
@@ -45,6 +46,6 @@ foreach(database pgsql sqlite mysql)
             -fno-strict-aliasing -std=gnu++11 -fPIC
             -Wno-unknown-pragmas)
     target_compile_definitions(${PLUGIN_NAME}
-            PRIVATE ${DATABASE_DEFS})
+            PUBLIC ${DATABASE_DEFS})
     install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION ${LIB_DIR})
 endforeach(database)

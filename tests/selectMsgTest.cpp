@@ -67,6 +67,8 @@ int main() {
             }
 
             auto section = answer.at(mppAdditionalSection).toMap(&ret);
+            auto bin = section["data"].toBin();
+            string str(bin.begin(), bin.end());
 
             cout << "mid - " << section["mid"].toUInt64() << endl
                  << "source - " << section["source"].toString() << endl
@@ -78,7 +80,7 @@ int main() {
                  << "exec_status - " << section["exec_Status"].toBool() << endl
                  << "status - " << section["status"].toInt32() << endl
                  << "channel - " << section["channel"].toString() << endl
-                 << "data - " << section["data"].toString() << endl;
+                 << "data - " << str << endl;
             isRunning = false;
         }
     }

@@ -20,7 +20,7 @@ function(odb_compile outvar)
 		HEADER_EPILOGUE INLINE_EPILOGUE SOURCE_EPILOGUE
 		MULTI_DATABASE
 		PROFILE)
-	set(multiValueParams FILES INCLUDE DB)
+	set(multiValueParams FILES INCLUDE DB DEFS)
 
 	cmake_parse_arguments(PARAM "${options}" "${oneValueParams}" "${multiValueParams}" ${ARGN})
 
@@ -33,6 +33,10 @@ function(odb_compile outvar)
 	endif()
 
 	set(ODB_ARGS)
+
+	foreach(def ${PARAM_DEFS})
+		list(APPEND ODB_ARGS -D "${def}")
+	endforeach()
 
 	if(PARAM_MULTI_DATABASE)
 		list(APPEND ODB_ARGS --multi-database "${PARAM_MULTI_DATABASE}")
