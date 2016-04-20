@@ -57,30 +57,51 @@ public:
         return m_mid;
     }
 
+    /**
+     * @brief Вернуть тип источника
+     **/
     std::string getSource() const {
         return m_source;
     }
 
+    /**
+     * @brief Вернуть источник
+     **/
     unsigned long getSA() const {
         return m_sa;
     }
 
+    /**
+     * @brief Вернуть приемник
+     **/
     unsigned long getDA() const {
         return m_da;
     }
 
+    /**
+     * @brief Вернуть тип сообщения
+     **/
     int getType() const {
         return m_type;
     }
 
+    /**
+     * @brief Вернуть время создания
+     **/
     unsigned long getCreateTime() const {
         return m_create_time;
     }
 
+    /**
+     * @brief Вернуть время приема/передачи
+     **/
     unsigned long getIoTime() const {
         return m_io_time;
     }
 
+    /**
+     * @brief Вернуть признак обработки
+     **/
     bool getExecStatus() const {
         return m_exec_status;
     }
@@ -94,10 +115,16 @@ public:
         return m_status;
     }
 
+    /**
+     * @brief Вернуть канал связи
+     **/
     std::string getChannel() const {
         return m_channel;
     }
 
+    /**
+     * @brief Вернуть данные
+     **/
     std::vector<char> getData() const {
         return m_data;
     }
@@ -160,7 +187,7 @@ private:
      * @brief Канал связи
      */
     std::string m_channel;
-//
+
 //#if defined(DATABASE_PGSQL)
 //#pragma db type("BYTEA")
 //#else

@@ -122,14 +122,14 @@ KeeperApplication::~KeeperApplication() {
 bool KeeperApplication::loadDatabasePlugin(DbPluginHandler& plugin) {
     plugin.handle = dlopen(plugin.path.c_str(), RTLD_LAZY);
     if (!plugin.handle) {
-        cerr << "Can't dlopen " << plugin.path << endl;
+        cerr << "Can't dlopen " << plugin.path << ", error " << dlerror() << endl;
         return false;
     }
 
     plugin.connectionInstantiator = reinterpret_cast<pluginIface>(
             dlsym(plugin.handle, "openConnection"));
     if (!plugin.connectionInstantiator) {
-        cerr << "Can't instantiate plugin " << endl;
+        cerr << "Can't instantiate plugin, error " << dlerror() << endl;
         return false;
     }
     return true;

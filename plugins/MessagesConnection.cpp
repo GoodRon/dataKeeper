@@ -72,11 +72,16 @@ void MessagesConnection::instantiateDatabase() {
 
 bool MessagesConnection::insertMessage(const MsgPack::MsgPackVariantMap& request,
                                        MsgPack::MsgPackVariantMap& answer) {
+    auto str = request["data"].toString();
+    std::vector<char> data(str.begin(), str.end());
+
+    cout << "message data: " << str << endl;
+
     Message message(request["source"].toString(), request["sa"].toInt64(),
                     request["da"].toInt64(), request["type"].toInt32(),
                     request["create_time"].toInt64(), request["io_time"].toInt64(),
                     request["exec_status"].toBool(), request["status"].toInt32(),
-                    request["channel"].toString(), request["data"].toBin());
+                    request["channel"].toString(), data);
 
     transaction t(m_database->begin());
     auto mid = m_database->persist(message);

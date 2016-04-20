@@ -134,6 +134,7 @@ function(odb_compile outvar)
 
 	file(REMOVE_RECURSE "${ODB_COMPILE_OUTPUT_DIR}")
 	file(MAKE_DIRECTORY "${ODB_COMPILE_OUTPUT_DIR}")
+	make_directory("${ODB_COMPILE_OUTPUT_DIR}")
 
 	foreach(input ${PARAM_FILES})
 		get_filename_component(fname "${input}" NAME_WE)
