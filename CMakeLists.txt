@@ -20,6 +20,7 @@ endif()
 
 include_directories(.)
 include_directories(include)
+include_directories(plugins)
 include_directories(libMsgPack)
 include_directories(libMsgPack/common)
 include_directories(libMsgPack/include)
