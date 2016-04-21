@@ -26,8 +26,6 @@
 #  error unknown database; did you forget to define the DATABASE_* macros?
 #endif
 
-#include <iostream>
-
 /**
  * @brief Функция для инициализации объекта для работы с базой данных
  *
