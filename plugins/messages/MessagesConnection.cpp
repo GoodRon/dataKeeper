@@ -53,6 +53,18 @@ bool MessagesConnection::processQuery(const MsgPackVariantMap& request,
         return selectMessage(request, answer);
     }
 
+    if (request["request"].toString() == "deleteAll") {
+        return deleteAll(request, answer);
+    }
+
+    if (request["request"].toString() == "deleteMessage") {
+        return deleteMessage(request, answer);
+    }
+
+    if (request["request"].toString() == "deleteOldMessages") {
+        return deleteOldMessages(request, answer);
+    }
+
     // to be continued
 
     return false;
@@ -95,9 +107,9 @@ bool MessagesConnection::selectMessage(const MsgPack::MsgPackVariantMap& request
     typedef odb::result<Message> result;
 
     transaction t (m_database->begin ());
-    result r (m_database->query<Message> (query::mid == request["mid"].toInt32()));
+    result r (m_database->query<Message> (query::mid == request["mid"].toInt64()));
 
-    cout << "requested mid = " << request["mid"].toInt32() << endl;
+    cout << "requested mid = " << request["mid"].toInt64() << endl;
 
     result::iterator i (r.begin ());
     if (i != r.end()) {
@@ -119,5 +131,38 @@ bool MessagesConnection::selectMessage(const MsgPack::MsgPackVariantMap& request
         answer["channel"] = i->getChannel();
         answer["data"] = i->getData();
     }
+    return true;
+}
+
+bool MessagesConnection::deleteAll(const MsgPack::MsgPackVariantMap&,
+                                   MsgPack::MsgPackVariantMap&) {
+    transaction t (m_database->begin ());
+    m_database->erase_query<Message>();
+    t.commit ();
+    return true;
+}
+
+bool MessagesConnection::deleteMessage(const MsgPack::MsgPackVariantMap& request,
+                                       MsgPack::MsgPackVariantMap&) {
+    transaction t (m_database->begin ());
+    m_database->erase<Message>(request["mid"].toInt64());
+    t.commit ();
+    return true;
+}
+
+bool MessagesConnection::deleteOldMessages(const MsgPack::MsgPackVariantMap& request,
+                                           MsgPack::MsgPackVariantMap& answer) {
+    transaction t (m_database->begin ());
+
+    typedef odb::query<Message> query;
+    query q(query::source == request["source"].toString() ||
+            query::sa == request["sa"].toInt64() ||
+            query::da == request["da"].toInt64() ||
+            query::type == request["type"].toInt32() ||
+            query::status == request["status"].toInt32() ||
+            query::channel == request["channel"].toString());
+    m_database->erase_query(q);
+
+    t.commit ();
     return true;
 }

@@ -3,8 +3,8 @@
  * Incom inc Tomsk Russia http://incom.tomsk.ru/
  */
 
-#ifndef DATAKEEPER_JSONCONFIGHELPER_HXX
-#define DATAKEEPER_JSONCONFIGHELPER_HXX
+#ifndef JSONCONFIGHELPER_HXX
+#define JSONCONFIGHELPER_HXX
 
 #include <string>
 #include <vector>
@@ -19,4 +19,4 @@
  **/
 bool jsonToCmdLine(const std::string& jsonConf, std::vector<std::string>& args);
 
-#endif //DATAKEEPER_JSONCONFIGHELPER_HXX
+#endif // JSONCONFIGHELPER_HXX

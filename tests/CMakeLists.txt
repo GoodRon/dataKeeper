@@ -1,7 +1,16 @@
 cmake_minimum_required(VERSION 2.8)
 
 add_executable(requestTest requestTest.cpp)
-target_link_libraries(requestTest ZmqIpc libMsgPack)
+target_link_libraries(requestTest ZmqIpc messageRequests)
 
 add_executable(selectMsgTest selectMsgTest.cpp)
-target_link_libraries(selectMsgTest ZmqIpc libMsgPack)
+target_link_libraries(selectMsgTest ZmqIpc messageRequests)
+
+add_executable(deleteAllTest deleteAllTest.cpp)
+target_link_libraries(deleteAllTest ZmqIpc messageRequests)
+
+add_executable(deleteMessageTest deleteMessageTest.cpp)
+target_link_libraries(deleteMessageTest ZmqIpc messageRequests)
+
+add_executable(deleteOldMessages deleteOldMessages.cpp)
+target_link_libraries(deleteOldMessages ZmqIpc messageRequests)

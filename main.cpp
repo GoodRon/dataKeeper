@@ -3,16 +3,12 @@
  * Incom inc Tomsk Russia http://incom.tomsk.ru/
  */
 
-#include <iostream>
-
 #include "KeeperApplication.h"
 
 using namespace std;
 
 int main() {
     KeeperApplication& instance = KeeperApplication::getInstance();
-    cout << "Loading plugins" << endl;
     instance.loadDatabasePlugins("plugins_conf.json");
-    cout << "Plugins loaded" << endl;
     return instance.execute();
 }

@@ -48,6 +48,15 @@ private:
 
     bool selectMessage(const MsgPack::MsgPackVariantMap& request,
                        MsgPack::MsgPackVariantMap& answer);
+
+    bool deleteAll(const MsgPack::MsgPackVariantMap& request,
+                   MsgPack::MsgPackVariantMap& answer);
+
+    bool deleteMessage(const MsgPack::MsgPackVariantMap& request,
+                       MsgPack::MsgPackVariantMap& answer);
+
+    bool deleteOldMessages(const MsgPack::MsgPackVariantMap& request,
+                           MsgPack::MsgPackVariantMap& answer);
 };
 
 #endif // MESSAGESDB_HXX

@@ -46,3 +46,6 @@ foreach(database pgsql sqlite mysql)
             PUBLIC ${DATABASE_DEFS})
     install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION ${LIB_DIR})
 endforeach(database)
+
+add_library(messageRequests STATIC MessagesRequests.cpp)
+target_link_libraries(messageRequests libMsgPack)

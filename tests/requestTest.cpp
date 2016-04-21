@@ -10,10 +10,9 @@
 #include "ipc_const.h"
 #include "ipc_fdnotify_recv.h"
 #include "ipc_msgpack.h"
-#include "MsgPackVariantMap.h"
-#include "MsgPackVariant.h"
 #include "MsgPackProto.hxx"
 #include "MsgPack_pack.h"
+#include "MessagesRequests.hxx"
 
 using namespace std;
 using namespace chrono;
@@ -23,34 +22,24 @@ using namespace ipc;
 int main() {
     fdnotify_recv ipc(SOCK_DEFAULT, "requestTest");
 
-    MsgPackVariantMap msg;
-    msg[mppPacketType] = "Database";
-    msg[mppSource] = "requestTest";
-    msg[mppDestination] = "dataKeeper";
-    msg[mppID] = 1;
-
-    MsgPackVariantMap request;
-    request["database"] = "messages";
-    request["request"] = "insertMessage";
-    request["source"] = "SourceObject";
-    request["sa"] = 42;
-    request["da"] = 17;
-    request["type"] = 256;
-    request["exttype"] = "none";
-    request["create_time"] = system_clock::to_time_t(system_clock::now());
-    request["io_time"] = system_clock::to_time_t(system_clock::now());
-    request["exec_status"] = true;
-    request["status"] = 0;
-    request["channel"] = "testChannel";
-
     string str = "the long string for the testing purposes with no meaning";
-    request["data"] = pack::bin(str.c_str(), str.size() + 1);
 
-    msg[mppAdditionalSection] = request;
+    auto pckg = insertMessage("requestTest", "unknown", 512, 1024, 256,
+                              system_clock::to_time_t(system_clock::now()),
+                              system_clock::to_time_t(system_clock::now()),
+                              true, 0, "TestChannel", rawData(str.begin(), str.end()));
 
-    auto package = msg.getPackage();
-    busipc_client::RawData data(package.begin(), package.end());
+    busipc_client::RawData data(pckg.begin(), pckg.end());
 
-    cout << ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data) << endl;
+    ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data);
+
+    pckg = insertMessage("requestTest", "someone", 312, 42, 512,
+                         system_clock::to_time_t(system_clock::now()),
+                         system_clock::to_time_t(system_clock::now()),
+                         true, 0, "TestChannel", rawData(str.begin(), str.end()));
+
+    busipc_client::RawData newData(pckg.begin(), pckg.end());
+
+    ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", newData);
     return 0;
 }

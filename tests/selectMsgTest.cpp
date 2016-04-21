@@ -13,6 +13,7 @@
 #include "MsgPackVariantMap.h"
 #include "MsgPackVariant.h"
 #include "MsgPackProto.hxx"
+#include "MessagesRequests.hxx"
 
 using namespace std;
 using namespace MsgPack;
@@ -21,21 +22,8 @@ using namespace ipc;
 int main() {
     fdnotify_recv ipc(SOCK_DEFAULT, "selectMsgTest");
 
-    MsgPackVariantMap msg;
-    msg[mppPacketType] = "Database";
-    msg[mppSource] = "selectMsgTest";
-    msg[mppDestination] = "dataKeeper";
-    msg[mppID] = 1;
-
-    MsgPackVariantMap request;
-    request["database"] = "messages";
-    request["request"] = "selectMessage";
-    request["mid"] = 1;
-
-    msg[mppAdditionalSection] = request;
-
-    auto package = msg.getPackage();
-    busipc_client::RawData data(package.begin(), package.end());
+    auto pckg = selectMessage("selectMsgTest", 1);
+    busipc_client::RawData data(pckg.begin(), pckg.end());
 
     cout << ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data) << endl;
 
