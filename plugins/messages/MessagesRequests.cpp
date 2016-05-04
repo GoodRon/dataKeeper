@@ -43,7 +43,7 @@ MsgPack::package insertMessage(const std::string& returnAddress, const std::stri
     return msg.getPackage();
 }
 
-MsgPack::package selectMessage(const std::string& returnAddress, int64_t mid) {
+MsgPack::package selectMessageByMid(const std::string &returnAddress, int64_t mid) {
     MsgPackVariantMap msg;
     msg[mppPacketType] = packetType;
     msg[mppSource] = returnAddress;
@@ -52,7 +52,7 @@ MsgPack::package selectMessage(const std::string& returnAddress, int64_t mid) {
 
     MsgPackVariantMap request;
     request["database"] = database;
-    request["request"] = "selectMessage";
+    request["request"] = "selectMessageByMid";
     request["mid"] = mid;
 
     msg[mppAdditionalSection] = request;

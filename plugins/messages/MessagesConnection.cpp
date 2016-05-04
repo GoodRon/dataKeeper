@@ -4,6 +4,7 @@
  */
 
 #include <iostream>
+#include <sstream>
 
 #include <odb/database.hxx>
 #include <odb/transaction.hxx>
@@ -49,8 +50,8 @@ bool MessagesConnection::processQuery(const MsgPackVariantMap& request,
         return insertMessage(request, answer);
     }
 
-    if (request["request"].toString() == "selectMessage") {
-        return selectMessage(request, answer);
+    if (request["request"].toString() == "selectMessageByMid") {
+        return selectMessageByMid(request, answer);
     }
 
     if (request["request"].toString() == "deleteAll") {
@@ -97,12 +98,12 @@ bool MessagesConnection::insertMessage(const MsgPack::MsgPackVariantMap& request
     auto mid = m_database->persist(message);
     t.commit();
 
-    answer["mid"] = mid;
+    answer["mid"] = static_cast<int64_t>(mid);
     return true;
 }
 
-bool MessagesConnection::selectMessage(const MsgPack::MsgPackVariantMap& request,
-                                       MsgPack::MsgPackVariantMap& answer) {
+bool MessagesConnection::selectMessageByMid(const MsgPack::MsgPackVariantMap &request,
+                                            MsgPack::MsgPackVariantMap &answer) {
     typedef odb::query<Message> query;
     typedef odb::result<Message> result;
 
@@ -119,13 +120,13 @@ bool MessagesConnection::selectMessage(const MsgPack::MsgPackVariantMap& request
 
         cout << "something was found" << endl;
 
-        answer["mid"] = i->getMid();
+        answer["mid"] = static_cast<int64_t>(i->getMid());
         answer["source"] = i->getSource();
-        answer["sa"] = i->getSA();
-        answer["da"] = i->getDA();
+        answer["sa"] = static_cast<int64_t>(i->getSA());
+        answer["da"] = static_cast<int64_t>(i->getDA());
         answer["type"] = i->getType();
-        answer["create_time"] = i->getCreateTime();
-        answer["io_time"] = i->getIoTime();
+        answer["create_time"] = static_cast<int64_t>(i->getCreateTime());
+        answer["io_time"] = static_cast<int64_t>(i->getIoTime());
         answer["exec_status"] = i->getExecStatus();
         answer["status"] = i->getStatus();
         answer["channel"] = i->getChannel();
@@ -152,6 +153,10 @@ bool MessagesConnection::deleteMessage(const MsgPack::MsgPackVariantMap& request
 
 bool MessagesConnection::deleteOldMessages(const MsgPack::MsgPackVariantMap& request,
                                            MsgPack::MsgPackVariantMap& answer) {
+//    stringstream stream;
+//    stream << "SELECT mid FROM Message WHERE ";
+
+
     transaction t (m_database->begin ());
 
     typedef odb::query<Message> query;
@@ -164,5 +169,12 @@ bool MessagesConnection::deleteOldMessages(const MsgPack::MsgPackVariantMap& req
     m_database->erase_query(q);
 
     t.commit ();
+    return true;
+}
+
+bool MessagesConnection::selectMessageByParameters(const MsgPack::MsgPackVariantMap& request,
+                               MsgPack::MsgPackVariantMap& answer) {
+
+
     return true;
 }

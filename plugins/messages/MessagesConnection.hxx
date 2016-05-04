@@ -46,8 +46,8 @@ private:
     bool insertMessage(const MsgPack::MsgPackVariantMap& request,
                        MsgPack::MsgPackVariantMap& answer);
 
-    bool selectMessage(const MsgPack::MsgPackVariantMap& request,
-                       MsgPack::MsgPackVariantMap& answer);
+    bool selectMessageByMid(const MsgPack::MsgPackVariantMap &request,
+                            MsgPack::MsgPackVariantMap &answer);
 
     bool deleteAll(const MsgPack::MsgPackVariantMap& request,
                    MsgPack::MsgPackVariantMap& answer);
@@ -57,6 +57,9 @@ private:
 
     bool deleteOldMessages(const MsgPack::MsgPackVariantMap& request,
                            MsgPack::MsgPackVariantMap& answer);
+
+    bool selectMessageByParameters(const MsgPack::MsgPackVariantMap& request,
+                                   MsgPack::MsgPackVariantMap& answer);
 };
 
 #endif // MESSAGESDB_HXX

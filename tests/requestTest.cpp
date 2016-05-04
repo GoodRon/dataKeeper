@@ -4,6 +4,7 @@
  */
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <chrono>
 
@@ -28,6 +29,14 @@ int main() {
                               system_clock::to_time_t(system_clock::now()),
                               system_clock::to_time_t(system_clock::now()),
                               true, 0, "TestChannel", rawData(str.begin(), str.end()));
+
+    cout << "hex: ";
+//    cout << std::setbase(16);
+//    cout << std::setfill('0');
+    for (auto& byte: pckg) {
+        cout << std::hex << std::setw(2) << byte << " ";
+    }
+    cout << endl;
 
     busipc_client::RawData data(pckg.begin(), pckg.end());
 

@@ -7,5 +7,5 @@ target_link_libraries(jsonConfigHelper jsoncpp)
 target_compile_options(jsonConfigHelper
         PRIVATE
         -Wall -Wextra -pedantic
-        -fno-strict-aliasing -std=gnu++11 -fPIC)
+        -fno-strict-aliasing -std=c++0x -fPIC)
 

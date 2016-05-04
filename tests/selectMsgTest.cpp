@@ -22,7 +22,7 @@ using namespace ipc;
 int main() {
     fdnotify_recv ipc(SOCK_DEFAULT, "selectMsgTest");
 
-    auto pckg = selectMessage("selectMsgTest", 1);
+    auto pckg = selectMessageByMid("selectMsgTest", 1);
     busipc_client::RawData data(pckg.begin(), pckg.end());
 
     cout << ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data) << endl;

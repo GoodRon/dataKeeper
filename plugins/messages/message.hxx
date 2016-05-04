@@ -199,4 +199,17 @@ private:
     std::vector<char> m_data;
 };
 
+
+
+//#pragma db view object(Message)
+/**
+ * @brief Вид для извлечения только ID сообщения из базы данных
+ */
+//struct MessageMid {
+//    /**
+//     * @brief ID в базе
+//     */
+//    unsigned long m_mid;
+//};
+
 #endif // MESSAGE_H
