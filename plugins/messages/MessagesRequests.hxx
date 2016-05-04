@@ -21,9 +21,10 @@ MsgPack::package deleteAll(const std::string& returnAddress);
 
 MsgPack::package deleteMessage(const std::string& returnAddress, int64_t mid);
 
-MsgPack::package deleteOldMessages(const std::string& returnAddress, const std::string& source,
-                                   int64_t sa, int64_t da, int32_t type, int32_t status,
-                                   const std::string& channel, unsigned amount);
+MsgPack::package deleteOldMessages(const std::string& returnAddress, unsigned amount = 0,
+                                   const std::string& source = "", int64_t sa = -1,
+                                   int64_t da = -1, int32_t type = -1, int32_t status = -1,
+                                   const std::string& channel = "");
 
 
 

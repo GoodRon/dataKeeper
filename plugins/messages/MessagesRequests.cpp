@@ -90,9 +90,9 @@ MsgPack::package deleteMessage(const std::string& returnAddress, int64_t mid) {
     return msg.getPackage();
 }
 
-MsgPack::package deleteOldMessages(const std::string& returnAddress, const std::string& source,
+MsgPack::package deleteOldMessages(const std::string& returnAddress, unsigned amount, const std::string& source,
                                    int64_t sa, int64_t da, int32_t type, int32_t status,
-                                   const std::string& channel, unsigned amount) {
+                                   const std::string& channel) {
     MsgPackVariantMap msg;
     msg[mppPacketType] = packetType;
     msg[mppSource] = returnAddress;

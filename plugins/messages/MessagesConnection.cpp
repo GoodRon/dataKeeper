@@ -4,7 +4,6 @@
  */
 
 #include <iostream>
-#include <sstream>
 
 #include <odb/database.hxx>
 #include <odb/transaction.hxx>
@@ -132,6 +131,7 @@ bool MessagesConnection::selectMessageByMid(const MsgPack::MsgPackVariantMap &re
         answer["channel"] = i->getChannel();
         answer["data"] = i->getData();
     }
+    t.commit ();
     return true;
 }
 
@@ -153,20 +153,53 @@ bool MessagesConnection::deleteMessage(const MsgPack::MsgPackVariantMap& request
 
 bool MessagesConnection::deleteOldMessages(const MsgPack::MsgPackVariantMap& request,
                                            MsgPack::MsgPackVariantMap& answer) {
-//    stringstream stream;
-//    stream << "SELECT mid FROM Message WHERE ";
+    typedef odb::query<Message> query;
+    typedef odb::result<Message> result;
 
+    query q;
+
+    if (request["source"].toString() != "") {
+        q = q && query(query::source == request["source"].toString());
+    }
+
+    if (request["sa"].toInt64() != -1) {
+        q = q && query(query::sa == request["sa"].toInt64());
+    }
+
+    if (request["da"].toInt64() != -1) {
+        q = q && query(query::da == request["da"].toInt64());
+    }
+
+    if (request["type"].toInt32() != -1) {
+        q = q && query(query::type == request["type"].toInt32());
+    }
+
+    if (request["status"].toInt32() != -1) {
+        q = q && query(query::status == request["status"].toInt32());
+    }
+
+    if (request["channel"].toString() != "") {
+        q = q && query(query::channel == request["channel"].toString());
+    }
+
+    q = q + query("ORDER BY" + query::create_time);
 
     transaction t (m_database->begin ());
+    result r (m_database->query<Message> (q));
 
-    typedef odb::query<Message> query;
-    query q(query::source == request["source"].toString() ||
-            query::sa == request["sa"].toInt64() ||
-            query::da == request["da"].toInt64() ||
-            query::type == request["type"].toInt32() ||
-            query::status == request["status"].toInt32() ||
-            query::channel == request["channel"].toString());
-    m_database->erase_query(q);
+    vector<int64_t> mids;
+
+    for (auto i = r.begin(); i != r.end(); ++i) {
+        cout << "mid: " << i->getMid() << endl;
+        mids.push_back(i->getMid());
+    }
+
+    long counter = mids.size() - request["amount"].toUInt32();
+    if (counter > 0) {
+        for (int i = 0; i < counter; ++i) {
+            m_database->erase<Message>(mids[i]);
+        }
+    }
 
     t.commit ();
     return true;

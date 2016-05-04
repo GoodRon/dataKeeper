@@ -13,7 +13,7 @@ using namespace ipc;
 int main() {
     fdnotify_recv ipc(SOCK_DEFAULT, "deleteAllTest");
 
-    auto pckg = deleteOldMessages("deleteAllTest", "", -1, -1, -1, 0, "", 5);
+    auto pckg = deleteOldMessages("deleteAllTest", 5, "someone", -1, -1, -1, 0, "");
     busipc_client::RawData data(pckg.begin(), pckg.end());
     ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data);
     return 0;
