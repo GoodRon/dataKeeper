@@ -31,6 +31,9 @@ MsgPack::package deleteOldMessages(const std::string& returnAddress, unsigned am
                                    int64_t da = -1, int32_t type = -1, int32_t status = -1,
                                    const std::string& channel = "");
 
+MsgPack::package updateStatus(const std::string& returnAddress, int64_t mid, int32_t status);
 
+MsgPack::package updateChannel(const std::string& returnAddress, int64_t mid,
+                               const std::string& channel);
 
 #endif // MESSAGEREQUESTS_HXX

@@ -70,6 +70,14 @@ bool MessagesConnection::processQuery(const MsgPackVariantMap& request,
         return selectMessagesByParameters(request, answer);
     }
 
+    if (request["request"].toString() == "updateStatus") {
+        return updateStatus(request, answer);
+    }
+
+    if (request["request"].toString() == "updateChannel") {
+        return updateChannel(request, answer);
+    }
+
     return false;
 }
 
@@ -253,5 +261,26 @@ bool MessagesConnection::selectMessagesByParameters(const MsgPack::MsgPackVarian
 
     answer["mids"] = mids;
     t.commit();
+    return true;
+}
+
+// TODO перехватить исключения
+bool MessagesConnection::updateStatus(const MsgPack::MsgPackVariantMap& request,
+                                      MsgPack::MsgPackVariantMap& answer) {
+    transaction t (m_database->begin ());
+    shared_ptr<Message> msg (m_database->load<Message> (request["mid"].toInt64()));
+    msg->setStatus(request["status"].toInt32());
+    m_database->update (*msg);
+    t.commit ();
+    return true;
+}
+
+bool MessagesConnection::updateChannel(const MsgPack::MsgPackVariantMap& request,
+                                       MsgPack::MsgPackVariantMap& answer) {
+    transaction t (m_database->begin ());
+    shared_ptr<Message> msg (m_database->load<Message> (request["mid"].toInt64()));
+    msg->setChannel(request["channel"].toString());
+    m_database->update (*msg);
+    t.commit ();
     return true;
 }

@@ -137,3 +137,38 @@ MsgPack::package deleteOldMessages(const std::string& returnAddress, unsigned am
     msg[mppAdditionalSection] = request;
     return msg.getPackage();
 }
+
+MsgPack::package updateStatus(const std::string& returnAddress, int64_t mid, int32_t status) {
+    MsgPackVariantMap msg;
+    msg[mppPacketType] = packetType;
+    msg[mppSource] = returnAddress;
+    msg[mppDestination] = destination;
+    msg[mppID] = 1;
+
+    MsgPackVariantMap request;
+    request["database"] = database;
+    request["request"] = "updateStatus";
+    request["mid"] = mid;
+    request["status"] = status;
+
+    msg[mppAdditionalSection] = request;
+    return msg.getPackage();
+}
+
+MsgPack::package updateChannel(const std::string& returnAddress, int64_t mid,
+                               const std::string& channel) {
+    MsgPackVariantMap msg;
+    msg[mppPacketType] = packetType;
+    msg[mppSource] = returnAddress;
+    msg[mppDestination] = destination;
+    msg[mppID] = 1;
+
+    MsgPackVariantMap request;
+    request["database"] = database;
+    request["request"] = "updateChannel";
+    request["mid"] = mid;
+    request["channel"] = channel;
+
+    msg[mppAdditionalSection] = request;
+    return msg.getPackage();
+}

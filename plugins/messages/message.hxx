@@ -11,6 +11,8 @@
 
 #include <odb/core.hxx>
 
+// TODO привести типы в соответствие
+
 #pragma db object
 /**
  * @brief Класс сообщения для базы данных messages.db
@@ -127,6 +129,22 @@ public:
      **/
     std::vector<char> getData() const {
         return m_data;
+    }
+
+    /**
+     * @brief Изменить статус
+     * @param status
+     **/
+    void setStatus(int status) {
+        m_status = status;
+    }
+
+    /**
+     * @brief Изменить канал связи
+     * @param channel
+     **/
+    void setChannel(const std::string& channel) {
+        m_channel = channel;
     }
 
 private:

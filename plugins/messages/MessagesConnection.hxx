@@ -60,6 +60,12 @@ private:
 
     bool selectMessagesByParameters(const MsgPack::MsgPackVariantMap& request,
                                     MsgPack::MsgPackVariantMap& answer);
+
+    bool updateStatus(const MsgPack::MsgPackVariantMap& request,
+                      MsgPack::MsgPackVariantMap& answer);
+
+    bool updateChannel(const MsgPack::MsgPackVariantMap& request,
+                       MsgPack::MsgPackVariantMap& answer);
 };
 
 #endif // MESSAGESDB_HXX
