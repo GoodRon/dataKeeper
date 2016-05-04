@@ -248,7 +248,7 @@ bool MessagesConnection::selectMessagesByParameters(const MsgPack::MsgPackVarian
 
     for (auto i = r.begin(); i != r.end(); ++i) {
         cout << "mid: " << i->getMid() << endl;
-        mids.push_back(i->getMid());
+        mids.push_back(static_cast<int64_t>(i->getMid()));
     }
 
     answer["mids"] = mids;
