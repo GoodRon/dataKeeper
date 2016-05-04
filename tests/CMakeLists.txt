@@ -6,6 +6,9 @@ target_link_libraries(requestTest ZmqIpc messageRequests)
 add_executable(selectMsgTest selectMsgTest.cpp)
 target_link_libraries(selectMsgTest ZmqIpc messageRequests)
 
+add_executable(selectMsgsTest selectMsgsTest.cpp)
+target_link_libraries(selectMsgsTest ZmqIpc messageRequests)
+
 add_executable(deleteAllTest deleteAllTest.cpp)
 target_link_libraries(deleteAllTest ZmqIpc messageRequests)
 

@@ -59,6 +59,30 @@ MsgPack::package selectMessageByMid(const std::string &returnAddress, int64_t mi
     return msg.getPackage();
 }
 
+MsgPack::package selectMessagesByParameters(const std::string& returnAddress,
+                                            const std::string& source, int64_t sa,
+                                            int64_t da, int32_t type, int32_t status,
+                                            const std::string& channel) {
+    MsgPackVariantMap msg;
+    msg[mppPacketType] = packetType;
+    msg[mppSource] = returnAddress;
+    msg[mppDestination] = destination;
+    msg[mppID] = 1;
+
+    MsgPackVariantMap request;
+    request["database"] = database;
+    request["request"] = "selectMessagesByParameters";
+    request["source"] = source;
+    request["sa"] = sa;
+    request["da"] = da;
+    request["type"] = type;
+    request["status"] = status;
+    request["channel"] = channel;
+
+    msg[mppAdditionalSection] = request;
+    return msg.getPackage();
+}
+
 MsgPack::package deleteAll(const std::string& returnAddress) {
     MsgPackVariantMap msg;
     msg[mppPacketType] = packetType;

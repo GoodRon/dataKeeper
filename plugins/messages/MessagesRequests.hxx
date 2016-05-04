@@ -17,6 +17,11 @@ MsgPack::package insertMessage(const std::string& returnAddress, const std::stri
 
 MsgPack::package selectMessageByMid(const std::string &returnAddress, int64_t mid);
 
+MsgPack::package selectMessagesByParameters(const std::string& returnAddress,
+                                            const std::string& source = "", int64_t sa = -1,
+                                            int64_t da = -1, int32_t type = -1, int32_t status = -1,
+                                            const std::string& channel = "");
+
 MsgPack::package deleteAll(const std::string& returnAddress);
 
 MsgPack::package deleteMessage(const std::string& returnAddress, int64_t mid);

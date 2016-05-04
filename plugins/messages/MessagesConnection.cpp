@@ -16,6 +16,7 @@
 #include "MsgPackVariantMap.h"
 #include "MsgPackVariant.h"
 #include "jsonConfigHelper.hxx"
+#include "MsgPackVariantArray.h"
 
 using namespace std;
 using namespace MsgPack;
@@ -65,7 +66,9 @@ bool MessagesConnection::processQuery(const MsgPackVariantMap& request,
         return deleteOldMessages(request, answer);
     }
 
-    // to be continued
+    if (request["request"].toString() == "selectMessagesByParameters") {
+        return selectMessagesByParameters(request, answer);
+    }
 
     return false;
 }
@@ -205,9 +208,50 @@ bool MessagesConnection::deleteOldMessages(const MsgPack::MsgPackVariantMap& req
     return true;
 }
 
-bool MessagesConnection::selectMessageByParameters(const MsgPack::MsgPackVariantMap& request,
-                               MsgPack::MsgPackVariantMap& answer) {
+bool MessagesConnection::selectMessagesByParameters(const MsgPack::MsgPackVariantMap& request,
+                                                    MsgPack::MsgPackVariantMap& answer) {
+    typedef odb::query<Message> query;
+    typedef odb::result<Message> result;
 
+    query q;
 
+    if (request["source"].toString() != "") {
+        q = q && query(query::source == request["source"].toString());
+    }
+
+    if (request["sa"].toInt64() != -1) {
+        q = q && query(query::sa == request["sa"].toInt64());
+    }
+
+    if (request["da"].toInt64() != -1) {
+        q = q && query(query::da == request["da"].toInt64());
+    }
+
+    if (request["type"].toInt32() != -1) {
+        q = q && query(query::type == request["type"].toInt32());
+    }
+
+    if (request["status"].toInt32() != -1) {
+        q = q && query(query::status == request["status"].toInt32());
+    }
+
+    if (request["channel"].toString() != "") {
+        q = q && query(query::channel == request["channel"].toString());
+    }
+
+    q = q + query("ORDER BY" + query::create_time);
+
+    transaction t (m_database->begin ());
+    result r (m_database->query<Message> (q));
+
+    MsgPackVariantArray mids;
+
+    for (auto i = r.begin(); i != r.end(); ++i) {
+        cout << "mid: " << i->getMid() << endl;
+        mids.push_back(i->getMid());
+    }
+
+    answer["mids"] = mids;
+    t.commit();
     return true;
 }
