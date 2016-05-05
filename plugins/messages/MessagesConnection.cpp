@@ -3,7 +3,7 @@
  * Incom inc Tomsk Russia http://incom.tomsk.ru/
  */
 
-#include <iostream>
+#include <syslog.h>
 
 #include <odb/database.hxx>
 #include <odb/transaction.hxx>
@@ -11,7 +11,6 @@
 #include "database.hxx"
 #include "message.hxx"
 #include "message_odb.h"
-
 #include "MessagesConnection.hxx"
 #include "MsgPackVariantMap.h"
 #include "MsgPackVariant.h"
@@ -32,15 +31,15 @@ MessagesConnection::~MessagesConnection() {
 
 bool MessagesConnection::processQuery(const MsgPackVariantMap& request,
                                       MsgPackVariantMap& answer) {
-    cout << "Message has been translated to MessagesPlugin" << endl;
+    syslog(LOG_INFO, "Message has been translated to MessagesPlugin");
 
     if (!m_database) {
-        cout << "No instance for database" << endl;
+        syslog(LOG_ERR, "There is no instance for database");
         return false;
     }
 
     if (!request.contain("request")) {
-        cout << "No request" << endl;
+        syslog(LOG_ERR, "There is no request in package");
         return false;
     }
 
@@ -82,12 +81,12 @@ bool MessagesConnection::processQuery(const MsgPackVariantMap& request,
 void MessagesConnection::instantiateDatabase() {
     vector<string> args;
     if (!jsonToCmdLine(m_jsonConf, args)) {
-        cout << "Can't cast jsonConf to cmdline" << endl;
+        syslog(LOG_ERR, "Can't cast jsonConf to cmdline");
         return;
     }
 
     auto db = create_database(args);
-    cout << "database was instantiated" << endl;
+    syslog(LOG_INFO, "Database was instantiated");
     m_database.reset(db);
 }
 
@@ -105,7 +104,7 @@ bool MessagesConnection::insertMessage(const MsgPack::MsgPackVariantMap& request
         answer["mid"] = static_cast<int64_t>(mid);
     } catch (odb::exception& ex) {
         t.rollback();
-        cout << "exception: " << ex.what() << endl;
+        syslog(LOG_ERR, "Exception: %s", ex.what());
         return false;
     }
     t.commit();
@@ -138,7 +137,7 @@ bool MessagesConnection::selectMessageByMid(const MsgPack::MsgPackVariantMap &re
         }
     } catch (odb::exception& ex) {
         t.rollback();
-        cout << "exception: " << ex.what() << endl;
+        syslog(LOG_ERR, "Exception: %s", ex.what());
         return false;
     }
     t.commit ();
@@ -152,7 +151,7 @@ bool MessagesConnection::deleteAll(const MsgPack::MsgPackVariantMap&,
         m_database->erase_query<Message>();
     } catch (odb::exception& ex) {
         t.rollback();
-        cout << "exception: " << ex.what() << endl;
+        syslog(LOG_ERR, "Exception: %s", ex.what());
         return false;
     }
     t.commit ();
@@ -166,7 +165,7 @@ bool MessagesConnection::deleteMessage(const MsgPack::MsgPackVariantMap& request
         m_database->erase<Message>(request["mid"].toInt64());
     } catch (odb::exception& ex) {
         t.rollback();
-        cout << "exception: " << ex.what() << endl;
+        syslog(LOG_ERR, "Exception: %s", ex.what());
         return false;
     }
     t.commit ();
@@ -213,7 +212,6 @@ bool MessagesConnection::deleteOldMessages(const MsgPack::MsgPackVariantMap& req
         vector<int64_t> mids;
 
         for (auto i = r.begin(); i != r.end(); ++i) {
-            cout << "mid: " << i->getMid() << endl;
             mids.push_back(i->getMid());
         }
 
@@ -225,7 +223,7 @@ bool MessagesConnection::deleteOldMessages(const MsgPack::MsgPackVariantMap& req
         }
     } catch (odb::exception& ex) {
         t.rollback();
-        cout << "exception: " << ex.what() << endl;
+        syslog(LOG_ERR, "Exception: %s", ex.what());
         return false;
     }
     t.commit ();
@@ -271,12 +269,11 @@ bool MessagesConnection::selectMessagesByParameters(const MsgPack::MsgPackVarian
         result r(m_database->query<Message> (q));
 
         for (auto i = r.begin(); i != r.end(); ++i) {
-            cout << "mid: " << i->getMid() << endl;
             mids.push_back(static_cast<int64_t>(i->getMid()));
         }
     } catch (odb::exception& ex) {
         t.rollback();
-        cout << "exception: " << ex.what() << endl;
+        syslog(LOG_ERR, "Exception: %s", ex.what());
         return false;
     }
     t.commit();
@@ -293,7 +290,7 @@ bool MessagesConnection::updateStatus(const MsgPack::MsgPackVariantMap& request,
         m_database->update(*msg);
     } catch (odb::exception& ex) {
         t.rollback();
-        cout << "exception: " << ex.what() << endl;
+        syslog(LOG_ERR, "Exception: %s", ex.what());
         return false;
     }
     t.commit();
@@ -309,7 +306,7 @@ bool MessagesConnection::updateChannel(const MsgPack::MsgPackVariantMap& request
         m_database->update(*msg);
     } catch (odb::exception& ex) {
         t.rollback();
-        cout << "exception: " << ex.what() << endl;
+        syslog(LOG_ERR, "Exception: %s", ex.what());
         return false;
     }
     t.commit();

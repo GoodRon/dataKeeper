@@ -3,12 +3,11 @@
  * Incom inc Tomsk Russia http://incom.tomsk.ru/
  */
 
-#include <iostream>
-
 #include <string>
 #include <ipc_const.h>
 #include <stdio.h>
 #include <dlfcn.h>
+#include <syslog.h>
 
 #include <sys/select.h>
 #include <jsoncpp/json/json.h>
@@ -33,7 +32,7 @@ bool KeeperApplication::loadDatabasePlugins(const string& jsonConf) {
     ifstream jsonFile;
     jsonFile.open(jsonConf);
     if (!jsonFile.good()) {
-        cerr << "Can't open json file " << jsonConf << endl;
+        syslog(LOG_ERR, "Can't open json file %s", jsonConf.c_str());
         return false;
     }
 
@@ -47,14 +46,15 @@ bool KeeperApplication::loadDatabasePlugins(const string& jsonConf) {
     Json::Reader reader;
 
     if (!reader.parse(jsonContent, root)) {
-        cerr << "Can't parse json from " << jsonConf << endl;
+        syslog(LOG_ERR, "Can't parse json from %s", jsonConf.c_str());
         return false;
     }
 
     Json::Value plugins = root["plugins"];
     for (int index = 0; static_cast<size_t>(index) < plugins.size(); ++index) {
+        syslog(LOG_INFO, "Part of json config:  %s", plugins[index].toStyledString().c_str());
+
         DbPluginHandler plugin;
-        cout << "part of json config: " << plugins[index].toStyledString() << endl;
         plugin.jsonConf = plugins[index].toStyledString();
         plugin.database = plugins[index].get("database", "").asString();
         plugin.type = plugins[index].get("type", "").asString();
@@ -113,23 +113,26 @@ KeeperApplication::KeeperApplication() :
         m_ipcFd(m_ipc->GetFd()),
         m_databasePlugins(),
         m_connectionsCache() {
+    openlog("dataKeeper", LOG_CONS, LOG_LOCAL3);
+    setlogmask(LOG_UPTO(7));
 }
 
 KeeperApplication::~KeeperApplication() {
     unloadDatabasePlugins();
+    closelog();
 }
 
 bool KeeperApplication::loadDatabasePlugin(DbPluginHandler& plugin) {
     plugin.handle = dlopen(plugin.path.c_str(), RTLD_LAZY);
     if (!plugin.handle) {
-        cerr << "Can't dlopen " << plugin.path << ", error " << dlerror() << endl;
+        syslog(LOG_ERR, "Can't dlopen %s, error %s", plugin.path.c_str(), dlerror());
         return false;
     }
 
     plugin.connectionInstantiator = reinterpret_cast<pluginIface>(
             dlsym(plugin.handle, "openConnection"));
     if (!plugin.connectionInstantiator) {
-        cerr << "Can't instantiate plugin, error " << dlerror() << endl;
+        syslog(LOG_ERR, "Can't instantiate plugin, error %s", dlerror());
         return false;
     }
     return true;
@@ -138,20 +141,20 @@ bool KeeperApplication::loadDatabasePlugin(DbPluginHandler& plugin) {
 bool KeeperApplication::openConnection(const std::string& database) {
     // Если соединение уже есть в кэше
     if (m_connectionsCache.find(database) != m_connectionsCache.end()) {
-        cerr << database << " in cache" << endl;
+        syslog(LOG_INFO, "%s already in cache", database.c_str());
         return true;
     }
 
     // Если нет плагина для этой базы данных
     if (m_databasePlugins.find(database) == m_databasePlugins.end()) {
-        cerr << database << " no plugin" << endl;
+        syslog(LOG_ERR, "%s has no plugin loaded", database.c_str());
         return false;
     }
 
     auto handler = m_databasePlugins[database];
     AbstractConnection* connection = handler.connectionInstantiator(handler.jsonConf.c_str());
     if (!connection) {
-        cerr << database << " can't instantiate connection" << endl;
+        syslog(LOG_ERR, "Can't instantiate connection for %s", database.c_str());
         return false;
     }
 
@@ -161,7 +164,7 @@ bool KeeperApplication::openConnection(const std::string& database) {
 }
 
 void KeeperApplication::processIpcMsg(const ipc::msg_t& msg) {
-    cout << "Message has been received" << endl;
+    syslog(LOG_INFO, "Message has been received");
 
     switch (msg.cmd) {
         case IpcCmd_Msgpack: {
@@ -174,7 +177,7 @@ void KeeperApplication::processIpcMsg(const ipc::msg_t& msg) {
             auto request = msgpack.toMap(&ret);
             // Если не можем преобразовать к мэпу - игнорируем
             if (!ret) {
-                cout << "Can't cast to map" << endl;
+                syslog(LOG_ERR, "Can't cast message to map");
                 break;
             }
 
@@ -200,18 +203,18 @@ void KeeperApplication::executeRequest(const MsgPackVariantMap &message,
                                        MsgPackVariantMap &answer) {
     // Если тип пакета не тот - игнорируем
     if (!message.contain(static_cast<int>(mppPacketType))) {
-        cout << "Wrong type" << endl;
+        syslog(LOG_ERR, "Wrong package type");
         return;
     }
 
     if (message.at(mppPacketType).toString() != "Database") {
-        cout << "Wrong adresse" << endl;
+        syslog(LOG_ERR, "Wrong package adresse");
         return;
     }
 
     // Добываем служебную дополнительную секцию
     if (!message.contain(static_cast<int>(mppAdditionalSection))) {
-        cout << "No additional section" << endl;
+        syslog(LOG_ERR, "There is no additional section in package");
         return;
     }
 
@@ -220,33 +223,27 @@ void KeeperApplication::executeRequest(const MsgPackVariantMap &message,
     auto request = value.toMap(&ret);
     // Если не можем преобразовать к мэпу - игнорируем
     if (!ret) {
-        cout << "Can't cast additional section to map" << endl;
+        syslog(LOG_ERR, "Can't cast additional section to map");
         return;
     }
 
     // Если не указана база данных - игнорируем
     if (!request.contain("database")) {
-        cout << "No database" << endl;
+        syslog(LOG_ERR, "There is no database in package");
         return;
     }
 
     // Добываем название базы данных
     auto database = request.at("database").toString();
 
-    cout << "Trying to open connection" << endl;
-
     // Открываем соединение
     if (!openConnection(database)) {
-        cout << "Can't open connection" << endl;
+        syslog(LOG_ERR, "Can't open connection to %s", database.c_str());
         return;
     }
 
-    cout << "Processing request" << endl;
-
     MsgPackVariantMap result;
     m_connectionsCache[database]->processQuery(request, result);
-
-    cout << "Done!" << endl;
 
     // Ответа не будет
     if (result.empty()) {
