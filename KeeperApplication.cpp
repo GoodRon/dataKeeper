@@ -93,7 +93,7 @@ int KeeperApplication::execute() noexcept {
 
         if ( ret == -1 ) {
             m_isRunning = false;
-            return -1;
+            m_returnCode = -1;
         } else if ( ret != 0 ) {
             m_ipc->Recv(message);
             processIpcMsg(message);

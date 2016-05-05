@@ -24,12 +24,10 @@ using namespace odb;
 
 MessagesConnection::MessagesConnection(const std::string &jsonConf):
     AbstractConnection(jsonConf) {
-
     instantiateDatabase();
 }
 
 MessagesConnection::~MessagesConnection() {
-
 }
 
 bool MessagesConnection::processQuery(const MsgPackVariantMap& request,
@@ -82,7 +80,7 @@ bool MessagesConnection::processQuery(const MsgPackVariantMap& request,
 }
 
 void MessagesConnection::instantiateDatabase() {
-    std::vector<std::string> args;
+    vector<string> args;
     if (!jsonToCmdLine(m_jsonConf, args)) {
         cout << "Can't cast jsonConf to cmdline" << endl;
         return;
@@ -95,8 +93,6 @@ void MessagesConnection::instantiateDatabase() {
 
 bool MessagesConnection::insertMessage(const MsgPack::MsgPackVariantMap& request,
                                        MsgPack::MsgPackVariantMap& answer) {
-    auto str = request["data"].toString();
-
     Message message(request["source"].toString(), request["sa"].toInt64(),
                     request["da"].toInt64(), request["type"].toInt32(),
                     request["create_time"].toInt64(), request["io_time"].toInt64(),
@@ -125,16 +121,9 @@ bool MessagesConnection::selectMessageByMid(const MsgPack::MsgPackVariantMap &re
     try {
         result r (m_database->query<Message> (query::mid == request["mid"].toInt64()));
 
-        cout << "requested mid = " << request["mid"].toInt64() << endl;
-
         result::iterator i (r.begin ());
         if (i != r.end()) {
             auto data = i->getData();
-            string str(data.begin(), data.end());
-            cout << "data: " << str << endl;
-
-            cout << "something was found" << endl;
-
             answer["mid"] = static_cast<int64_t>(i->getMid());
             answer["source"] = i->getSource();
             answer["sa"] = static_cast<int64_t>(i->getSA());
