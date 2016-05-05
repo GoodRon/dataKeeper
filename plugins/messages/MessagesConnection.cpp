@@ -96,7 +96,6 @@ void MessagesConnection::instantiateDatabase() {
 bool MessagesConnection::insertMessage(const MsgPack::MsgPackVariantMap& request,
                                        MsgPack::MsgPackVariantMap& answer) {
     auto str = request["data"].toString();
-    cout << "message data: " << str << endl;
 
     Message message(request["source"].toString(), request["sa"].toInt64(),
                     request["da"].toInt64(), request["type"].toInt32(),
@@ -105,10 +104,15 @@ bool MessagesConnection::insertMessage(const MsgPack::MsgPackVariantMap& request
                     request["channel"].toString(), request["data"].toBin());
 
     transaction t(m_database->begin());
-    auto mid = m_database->persist(message);
+    try {
+        auto mid = m_database->persist(message);
+        answer["mid"] = static_cast<int64_t>(mid);
+    } catch (odb::exception& ex) {
+        t.rollback();
+        cout << "exception: " << ex.what() << endl;
+        return false;
+    }
     t.commit();
-
-    answer["mid"] = static_cast<int64_t>(mid);
     return true;
 }
 
@@ -118,29 +122,35 @@ bool MessagesConnection::selectMessageByMid(const MsgPack::MsgPackVariantMap &re
     typedef odb::result<Message> result;
 
     transaction t (m_database->begin ());
-    result r (m_database->query<Message> (query::mid == request["mid"].toInt64()));
+    try {
+        result r (m_database->query<Message> (query::mid == request["mid"].toInt64()));
 
-    cout << "requested mid = " << request["mid"].toInt64() << endl;
+        cout << "requested mid = " << request["mid"].toInt64() << endl;
 
-    result::iterator i (r.begin ());
-    if (i != r.end()) {
-        auto data = i->getData();
-        string str(data.begin(), data.end());
-        cout << "data: " << str << endl;
+        result::iterator i (r.begin ());
+        if (i != r.end()) {
+            auto data = i->getData();
+            string str(data.begin(), data.end());
+            cout << "data: " << str << endl;
 
-        cout << "something was found" << endl;
+            cout << "something was found" << endl;
 
-        answer["mid"] = static_cast<int64_t>(i->getMid());
-        answer["source"] = i->getSource();
-        answer["sa"] = static_cast<int64_t>(i->getSA());
-        answer["da"] = static_cast<int64_t>(i->getDA());
-        answer["type"] = i->getType();
-        answer["create_time"] = static_cast<int64_t>(i->getCreateTime());
-        answer["io_time"] = static_cast<int64_t>(i->getIoTime());
-        answer["exec_status"] = i->getExecStatus();
-        answer["status"] = i->getStatus();
-        answer["channel"] = i->getChannel();
-        answer["data"] = i->getData();
+            answer["mid"] = static_cast<int64_t>(i->getMid());
+            answer["source"] = i->getSource();
+            answer["sa"] = static_cast<int64_t>(i->getSA());
+            answer["da"] = static_cast<int64_t>(i->getDA());
+            answer["type"] = i->getType();
+            answer["create_time"] = static_cast<int64_t>(i->getCreateTime());
+            answer["io_time"] = static_cast<int64_t>(i->getIoTime());
+            answer["exec_status"] = i->getExecStatus();
+            answer["status"] = i->getStatus();
+            answer["channel"] = i->getChannel();
+            answer["data"] = i->getData();
+        }
+    } catch (odb::exception& ex) {
+        t.rollback();
+        cout << "exception: " << ex.what() << endl;
+        return false;
     }
     t.commit ();
     return true;
@@ -148,8 +158,14 @@ bool MessagesConnection::selectMessageByMid(const MsgPack::MsgPackVariantMap &re
 
 bool MessagesConnection::deleteAll(const MsgPack::MsgPackVariantMap&,
                                    MsgPack::MsgPackVariantMap&) {
-    transaction t (m_database->begin ());
-    m_database->erase_query<Message>();
+    transaction t(m_database->begin ());
+    try {
+        m_database->erase_query<Message>();
+    } catch (odb::exception& ex) {
+        t.rollback();
+        cout << "exception: " << ex.what() << endl;
+        return false;
+    }
     t.commit ();
     return true;
 }
@@ -157,7 +173,13 @@ bool MessagesConnection::deleteAll(const MsgPack::MsgPackVariantMap&,
 bool MessagesConnection::deleteMessage(const MsgPack::MsgPackVariantMap& request,
                                        MsgPack::MsgPackVariantMap&) {
     transaction t (m_database->begin ());
-    m_database->erase<Message>(request["mid"].toInt64());
+    try {
+        m_database->erase<Message>(request["mid"].toInt64());
+    } catch (odb::exception& ex) {
+        t.rollback();
+        cout << "exception: " << ex.what() << endl;
+        return false;
+    }
     t.commit ();
     return true;
 }
@@ -196,22 +218,27 @@ bool MessagesConnection::deleteOldMessages(const MsgPack::MsgPackVariantMap& req
     q = q + query("ORDER BY" + query::create_time);
 
     transaction t (m_database->begin ());
-    result r (m_database->query<Message> (q));
+    try {
+        result r (m_database->query<Message> (q));
 
-    vector<int64_t> mids;
+        vector<int64_t> mids;
 
-    for (auto i = r.begin(); i != r.end(); ++i) {
-        cout << "mid: " << i->getMid() << endl;
-        mids.push_back(i->getMid());
-    }
-
-    long counter = mids.size() - request["amount"].toUInt32();
-    if (counter > 0) {
-        for (int i = 0; i < counter; ++i) {
-            m_database->erase<Message>(mids[i]);
+        for (auto i = r.begin(); i != r.end(); ++i) {
+            cout << "mid: " << i->getMid() << endl;
+            mids.push_back(i->getMid());
         }
-    }
 
+        long counter = mids.size() - request["amount"].toUInt32();
+        if (counter > 0) {
+            for (int i = 0; i < counter; ++i) {
+                m_database->erase<Message>(mids[i]);
+            }
+        }
+    } catch (odb::exception& ex) {
+        t.rollback();
+        cout << "exception: " << ex.what() << endl;
+        return false;
+    }
     t.commit ();
     return true;
 }
@@ -249,38 +276,53 @@ bool MessagesConnection::selectMessagesByParameters(const MsgPack::MsgPackVarian
 
     q = q + query("ORDER BY" + query::create_time);
 
-    transaction t (m_database->begin ());
-    result r (m_database->query<Message> (q));
-
     MsgPackVariantArray mids;
+    transaction t(m_database->begin ());
+    try {
+        result r(m_database->query<Message> (q));
 
-    for (auto i = r.begin(); i != r.end(); ++i) {
-        cout << "mid: " << i->getMid() << endl;
-        mids.push_back(static_cast<int64_t>(i->getMid()));
+        for (auto i = r.begin(); i != r.end(); ++i) {
+            cout << "mid: " << i->getMid() << endl;
+            mids.push_back(static_cast<int64_t>(i->getMid()));
+        }
+    } catch (odb::exception& ex) {
+        t.rollback();
+        cout << "exception: " << ex.what() << endl;
+        return false;
     }
-
-    answer["mids"] = mids;
     t.commit();
+    answer["mids"] = mids;
     return true;
 }
 
-// TODO перехватить исключения
 bool MessagesConnection::updateStatus(const MsgPack::MsgPackVariantMap& request,
                                       MsgPack::MsgPackVariantMap& answer) {
-    transaction t (m_database->begin ());
-    shared_ptr<Message> msg (m_database->load<Message> (request["mid"].toInt64()));
-    msg->setStatus(request["status"].toInt32());
-    m_database->update (*msg);
-    t.commit ();
+    transaction t(m_database->begin ());
+    try {
+        shared_ptr<Message> msg(m_database->load<Message>(request["mid"].toInt64()));
+        msg->setStatus(request["status"].toInt32());
+        m_database->update(*msg);
+    } catch (odb::exception& ex) {
+        t.rollback();
+        cout << "exception: " << ex.what() << endl;
+        return false;
+    }
+    t.commit();
     return true;
 }
 
 bool MessagesConnection::updateChannel(const MsgPack::MsgPackVariantMap& request,
                                        MsgPack::MsgPackVariantMap& answer) {
-    transaction t (m_database->begin ());
-    shared_ptr<Message> msg (m_database->load<Message> (request["mid"].toInt64()));
-    msg->setChannel(request["channel"].toString());
-    m_database->update (*msg);
-    t.commit ();
+    transaction t(m_database->begin ());
+    try {
+        shared_ptr<Message> msg (m_database->load<Message>(request["mid"].toInt64()));
+        msg->setChannel(request["channel"].toString());
+        m_database->update(*msg);
+    } catch (odb::exception& ex) {
+        t.rollback();
+        cout << "exception: " << ex.what() << endl;
+        return false;
+    }
+    t.commit();
     return true;
 }

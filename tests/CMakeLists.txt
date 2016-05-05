@@ -17,3 +17,9 @@ target_link_libraries(deleteMessageTest ZmqIpc messageRequests)
 
 add_executable(deleteOldMessages deleteOldMessages.cpp)
 target_link_libraries(deleteOldMessages ZmqIpc messageRequests)
+
+add_executable(updateStatusTest updateStatusTest.cpp)
+target_link_libraries(updateStatusTest ZmqIpc messageRequests)
+
+add_executable(updateChannelTest updateChannelTest.cpp)
+target_link_libraries(updateChannelTest ZmqIpc messageRequests)
