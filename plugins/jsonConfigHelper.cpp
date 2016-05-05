@@ -98,13 +98,13 @@ bool mysqlParser(const std::string& jsonConf, std::vector<std::string>& args) {
 }
 
 // TODO write me
-bool pgsqlParser(const std::string& jsonConf, std::vector<std::string>& args) {
+bool pgsqlParser(const std::string&, std::vector<std::string>&) {
 
     return true;
 }
 
 // TODO write me
-bool mssqlParser(const std::string& jsonConf, std::vector<std::string>& args) {
+bool mssqlParser(const std::string&, std::vector<std::string>&) {
 
     return true;
 }

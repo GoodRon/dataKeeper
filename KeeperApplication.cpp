@@ -72,7 +72,7 @@ bool KeeperApplication::loadDatabasePlugins(const string& jsonConf) {
 
 void KeeperApplication::unloadDatabasePlugins() {
     for (auto& connection: m_databasePlugins) {
-        // TODO check return value
+        // TODO check the return value
         dlclose(connection.second.handle);
     }
     m_databasePlugins.clear();
@@ -82,7 +82,6 @@ int KeeperApplication::execute() noexcept {
     m_isRunning = true;
 
     fd_set fds;
-//    timeval tv;
     msg_t message;
 
     while (m_isRunning) {
@@ -91,10 +90,10 @@ int KeeperApplication::execute() noexcept {
 
         int ret = select(m_ipcFd + 1, &fds, 0, 0, nullptr);
 
-        if ( ret == -1 ) {
+        if (ret == -1) {
             m_isRunning = false;
             m_returnCode = -1;
-        } else if ( ret != 0 ) {
+        } else if (ret != 0) {
             m_ipc->Recv(message);
             processIpcMsg(message);
         }

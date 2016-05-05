@@ -173,7 +173,7 @@ bool MessagesConnection::deleteMessage(const MsgPack::MsgPackVariantMap& request
 }
 
 bool MessagesConnection::deleteOldMessages(const MsgPack::MsgPackVariantMap& request,
-                                           MsgPack::MsgPackVariantMap& answer) {
+                                           MsgPack::MsgPackVariantMap&) {
     typedef odb::query<Message> query;
     typedef odb::result<Message> result;
 
@@ -282,7 +282,7 @@ bool MessagesConnection::selectMessagesByParameters(const MsgPack::MsgPackVarian
 }
 
 bool MessagesConnection::updateStatus(const MsgPack::MsgPackVariantMap& request,
-                                      MsgPack::MsgPackVariantMap& answer) {
+                                      MsgPack::MsgPackVariantMap&) {
     transaction t(m_database->begin ());
     try {
         shared_ptr<Message> msg(m_database->load<Message>(request["mid"].toInt64()));
@@ -298,7 +298,7 @@ bool MessagesConnection::updateStatus(const MsgPack::MsgPackVariantMap& request,
 }
 
 bool MessagesConnection::updateChannel(const MsgPack::MsgPackVariantMap& request,
-                                       MsgPack::MsgPackVariantMap& answer) {
+                                       MsgPack::MsgPackVariantMap&) {
     transaction t(m_database->begin ());
     try {
         shared_ptr<Message> msg (m_database->load<Message>(request["mid"].toInt64()));

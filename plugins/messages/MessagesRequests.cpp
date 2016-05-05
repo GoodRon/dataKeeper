@@ -15,10 +15,12 @@ const string packetType = "Database";
 const string destination = "dataKeeper";
 const string database = "messages";
 
-MsgPack::package insertMessage(const std::string& returnAddress, const std::string& source,
+namespace messages {
+
+MsgPack::package insertMessage(const std::string &returnAddress, const std::string &source,
                                uint64_t sa, uint64_t da, int32_t type, int64_t create_time,
                                int64_t io_time, bool exec_status, int32_t status,
-                               const std::string& channel, const rawData& data) {
+                               const std::string &channel, const rawData &data) {
     MsgPackVariantMap msg;
     msg[mppPacketType] = packetType;
     msg[mppSource] = returnAddress;
@@ -59,10 +61,10 @@ MsgPack::package selectMessageByMid(const std::string &returnAddress, int64_t mi
     return msg.getPackage();
 }
 
-MsgPack::package selectMessagesByParameters(const std::string& returnAddress,
-                                            const std::string& source, int64_t sa,
+MsgPack::package selectMessagesByParameters(const std::string &returnAddress,
+                                            const std::string &source, int64_t sa,
                                             int64_t da, int32_t type, int32_t status,
-                                            const std::string& channel) {
+                                            const std::string &channel) {
     MsgPackVariantMap msg;
     msg[mppPacketType] = packetType;
     msg[mppSource] = returnAddress;
@@ -83,7 +85,7 @@ MsgPack::package selectMessagesByParameters(const std::string& returnAddress,
     return msg.getPackage();
 }
 
-MsgPack::package deleteAll(const std::string& returnAddress) {
+MsgPack::package deleteAll(const std::string &returnAddress) {
     MsgPackVariantMap msg;
     msg[mppPacketType] = packetType;
     msg[mppSource] = returnAddress;
@@ -98,7 +100,7 @@ MsgPack::package deleteAll(const std::string& returnAddress) {
     return msg.getPackage();
 }
 
-MsgPack::package deleteMessage(const std::string& returnAddress, int64_t mid) {
+MsgPack::package deleteMessage(const std::string &returnAddress, int64_t mid) {
     MsgPackVariantMap msg;
     msg[mppPacketType] = packetType;
     msg[mppSource] = returnAddress;
@@ -114,9 +116,9 @@ MsgPack::package deleteMessage(const std::string& returnAddress, int64_t mid) {
     return msg.getPackage();
 }
 
-MsgPack::package deleteOldMessages(const std::string& returnAddress, unsigned amount, const std::string& source,
+MsgPack::package deleteOldMessages(const std::string &returnAddress, unsigned amount, const std::string &source,
                                    int64_t sa, int64_t da, int32_t type, int32_t status,
-                                   const std::string& channel) {
+                                   const std::string &channel) {
     MsgPackVariantMap msg;
     msg[mppPacketType] = packetType;
     msg[mppSource] = returnAddress;
@@ -138,7 +140,7 @@ MsgPack::package deleteOldMessages(const std::string& returnAddress, unsigned am
     return msg.getPackage();
 }
 
-MsgPack::package updateStatus(const std::string& returnAddress, int64_t mid, int32_t status) {
+MsgPack::package updateStatus(const std::string &returnAddress, int64_t mid, int32_t status) {
     MsgPackVariantMap msg;
     msg[mppPacketType] = packetType;
     msg[mppSource] = returnAddress;
@@ -155,8 +157,8 @@ MsgPack::package updateStatus(const std::string& returnAddress, int64_t mid, int
     return msg.getPackage();
 }
 
-MsgPack::package updateChannel(const std::string& returnAddress, int64_t mid,
-                               const std::string& channel) {
+MsgPack::package updateChannel(const std::string &returnAddress, int64_t mid,
+                               const std::string &channel) {
     MsgPackVariantMap msg;
     msg[mppPacketType] = packetType;
     msg[mppSource] = returnAddress;
@@ -172,3 +174,6 @@ MsgPack::package updateChannel(const std::string& returnAddress, int64_t mid,
     msg[mppAdditionalSection] = request;
     return msg.getPackage();
 }
+
+}
+

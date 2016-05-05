@@ -3,12 +3,14 @@
  * Incom inc Tomsk Russia http://incom.tomsk.ru/
  */
 
-#ifndef MESSAGEREQUESTS_HXX
-#define MESSAGEREQUESTS_HXX
+#ifndef MESSAGE_REQUESTS_HXX
+#define MESSAGE_REQUESTS_HXX
 
 #include <string>
 
 #include "types.h"
+
+namespace messages {
 
 /**
  * @brief Сформировать запрос на добавление сообщения в базу данных
@@ -26,10 +28,10 @@
  * @param data данные сообщения
  * @return MsgPack::package
  **/
-MsgPack::package insertMessage(const std::string& returnAddress, const std::string& source,
+MsgPack::package insertMessage(const std::string &returnAddress, const std::string &source,
                                uint64_t sa, uint64_t da, int32_t type, int64_t create_time,
                                int64_t io_time, bool exec_status, int32_t status,
-                               const std::string& channel, const MsgPack::rawData& data);
+                               const std::string &channel, const MsgPack::rawData &data);
 
 /**
  * @brief Сформировать запрос на выдачу сообщения по его mid
@@ -52,10 +54,10 @@ MsgPack::package selectMessageByMid(const std::string &returnAddress, int64_t mi
  * @param channel имя канала связи ("" - не учитывается)
  * @return MsgPack::package
  **/
-MsgPack::package selectMessagesByParameters(const std::string& returnAddress,
-                                            const std::string& source = "", int64_t sa = -1,
+MsgPack::package selectMessagesByParameters(const std::string &returnAddress,
+                                            const std::string &source = "", int64_t sa = -1,
                                             int64_t da = -1, int32_t type = -1, int32_t status = -1,
-                                            const std::string& channel = "");
+                                            const std::string &channel = "");
 
 /**
  * @brief Сформировать запрос на удаление всех сообщений
@@ -63,7 +65,7 @@ MsgPack::package selectMessagesByParameters(const std::string& returnAddress,
  * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @return MsgPack::package
  **/
-MsgPack::package deleteAll(const std::string& returnAddress);
+MsgPack::package deleteAll(const std::string &returnAddress);
 
 /**
  * @brief Сформировать запрос на удаление сообщения по его mid
@@ -72,7 +74,7 @@ MsgPack::package deleteAll(const std::string& returnAddress);
  * @param mid уникальный идентификатор сообщения
  * @return MsgPack::package
  **/
-MsgPack::package deleteMessage(const std::string& returnAddress, int64_t mid);
+MsgPack::package deleteMessage(const std::string &returnAddress, int64_t mid);
 
 /**
  * @brief Сформировать запрос на удаление устаревших сообщений
@@ -87,10 +89,10 @@ MsgPack::package deleteMessage(const std::string& returnAddress, int64_t mid);
  * @param channel имя канала связи ("" - не учитывается)
  * @return MsgPack::package
  **/
-MsgPack::package deleteOldMessages(const std::string& returnAddress, unsigned amount = 0,
-                                   const std::string& source = "", int64_t sa = -1,
+MsgPack::package deleteOldMessages(const std::string &returnAddress, unsigned amount = 0,
+                                   const std::string &source = "", int64_t sa = -1,
                                    int64_t da = -1, int32_t type = -1, int32_t status = -1,
-                                   const std::string& channel = "");
+                                   const std::string &channel = "");
 
 /**
  * @brief Сформировать запрос на обновление типа сообщения
@@ -100,7 +102,7 @@ MsgPack::package deleteOldMessages(const std::string& returnAddress, unsigned am
  * @param status новый тип
  * @return MsgPack::package
  **/
-MsgPack::package updateStatus(const std::string& returnAddress, int64_t mid, int32_t status);
+MsgPack::package updateStatus(const std::string &returnAddress, int64_t mid, int32_t status);
 
 /**
  * @brief Сформировать запрос на обновление канала связи сообщения
@@ -110,7 +112,9 @@ MsgPack::package updateStatus(const std::string& returnAddress, int64_t mid, int
  * @param channel новый канал связи
  * @return MsgPack::package
  **/
-MsgPack::package updateChannel(const std::string& returnAddress, int64_t mid,
-                               const std::string& channel);
+MsgPack::package updateChannel(const std::string &returnAddress, int64_t mid,
+                               const std::string &channel);
 
-#endif // MESSAGEREQUESTS_HXX
+}
+
+#endif // MESSAGE_REQUESTS_HXX

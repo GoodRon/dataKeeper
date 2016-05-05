@@ -23,3 +23,6 @@ target_link_libraries(updateStatusTest ZmqIpc messageRequests)
 
 add_executable(updateChannelTest updateChannelTest.cpp)
 target_link_libraries(updateChannelTest ZmqIpc messageRequests)
+
+add_executable(insertRecordTest insertRecordTest.cpp)
+target_link_libraries(insertRecordTest ZmqIpc journalRequests)

@@ -11,7 +11,7 @@
 #include "AbstractConnection.hxx"
 
 /**
- * @brief Класс соединения с базой данных messages.db
+ * @brief Класс соединения с базой данных messages
  **/
 class MessagesConnection : public AbstractConnection {
 public:

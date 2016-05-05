@@ -15,7 +15,7 @@
 
 #pragma db object
 /**
- * @brief Класс сообщения для базы данных messages.db
+ * @brief Класс сообщения для базы данных messages
  **/
 class Message {
 public:
@@ -61,6 +61,8 @@ public:
 
     /**
      * @brief Вернуть тип источника
+     *
+     * @return string
      **/
     std::string getSource() const {
         return m_source;
@@ -68,6 +70,8 @@ public:
 
     /**
      * @brief Вернуть источник
+     *
+     * @return unsigned long
      **/
     unsigned long getSA() const {
         return m_sa;
@@ -75,6 +79,8 @@ public:
 
     /**
      * @brief Вернуть приемник
+     *
+     * @return unsigned long
      **/
     unsigned long getDA() const {
         return m_da;
@@ -82,6 +88,8 @@ public:
 
     /**
      * @brief Вернуть тип сообщения
+     *
+     * @return int
      **/
     int getType() const {
         return m_type;
@@ -89,6 +97,8 @@ public:
 
     /**
      * @brief Вернуть время создания
+     *
+     * @return unsigned long
      **/
     unsigned long getCreateTime() const {
         return m_create_time;
@@ -96,6 +106,8 @@ public:
 
     /**
      * @brief Вернуть время приема/передачи
+     *
+     * @return unsigned long
      **/
     unsigned long getIoTime() const {
         return m_io_time;
@@ -103,6 +115,8 @@ public:
 
     /**
      * @brief Вернуть признак обработки
+     *
+     * @return bool
      **/
     bool getExecStatus() const {
         return m_exec_status;
@@ -119,6 +133,8 @@ public:
 
     /**
      * @brief Вернуть канал связи
+     *
+     * @return string
      **/
     std::string getChannel() const {
         return m_channel;
@@ -126,6 +142,8 @@ public:
 
     /**
      * @brief Вернуть данные
+     *
+     * @return vector<char>
      **/
     std::vector<char> getData() const {
         return m_data;
@@ -216,18 +234,5 @@ private:
      */
     std::vector<char> m_data;
 };
-
-
-
-//#pragma db view object(Message)
-/**
- * @brief Вид для извлечения только ID сообщения из базы данных
- */
-//struct MessageMid {
-//    /**
-//     * @brief ID в базе
-//     */
-//    unsigned long m_mid;
-//};
 
 #endif // MESSAGE_H
