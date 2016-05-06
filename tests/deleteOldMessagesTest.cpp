@@ -9,6 +9,7 @@
 #include "ipc_msgpack.h"
 
 using namespace ipc;
+using namespace messages_db;
 
 int main() {
     fdnotify_recv ipc(SOCK_DEFAULT, "deleteAllTest");

@@ -15,7 +15,7 @@ target_link_libraries(deleteAllTest ZmqIpc messageRequests)
 add_executable(deleteMessageTest deleteMessageTest.cpp)
 target_link_libraries(deleteMessageTest ZmqIpc messageRequests)
 
-add_executable(deleteOldMessages deleteOldMessages.cpp)
+add_executable(deleteOldMessages deleteOldMessagesTest.cpp)
 target_link_libraries(deleteOldMessages ZmqIpc messageRequests)
 
 add_executable(updateStatusTest updateStatusTest.cpp)
@@ -26,3 +26,15 @@ target_link_libraries(updateChannelTest ZmqIpc messageRequests)
 
 add_executable(insertRecordTest insertRecordTest.cpp)
 target_link_libraries(insertRecordTest ZmqIpc journalRequests)
+
+add_executable(selectRecordTest selectRecordTest.cpp)
+target_link_libraries(selectRecordTest ZmqIpc journalRequests)
+
+add_executable(selectRecordsTest selectRecordsTest.cpp)
+target_link_libraries(selectRecordsTest ZmqIpc journalRequests)
+
+add_executable(deleteAllRecordsTest deleteAllRecordsTest.cpp)
+target_link_libraries(deleteAllRecordsTest ZmqIpc journalRequests)
+
+add_executable(deleteOldRecordsTest deleteOldRecordsTest.cpp)
+target_link_libraries(deleteOldRecordsTest ZmqIpc journalRequests)

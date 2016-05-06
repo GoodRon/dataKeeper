@@ -18,6 +18,7 @@ using namespace std;
 using namespace chrono;
 using namespace MsgPack;
 using namespace ipc;
+using namespace messages_db;
 
 int main() {
     fdnotify_recv ipc(SOCK_DEFAULT, "requestTest");

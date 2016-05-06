@@ -41,6 +41,15 @@ private:
 
     bool deleteAll(const MsgPack::MsgPackVariantMap& request,
                    MsgPack::MsgPackVariantMap& answer);
+
+    bool deleteOldRecords(const MsgPack::MsgPackVariantMap& request,
+                          MsgPack::MsgPackVariantMap& answer);
+
+    bool selectRecordsByParameters(const MsgPack::MsgPackVariantMap& request,
+                                   MsgPack::MsgPackVariantMap& answer);
+
+    bool selectRecordByMid(const MsgPack::MsgPackVariantMap& request,
+                           MsgPack::MsgPackVariantMap& answer);
 };
 
 

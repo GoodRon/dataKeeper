@@ -10,7 +10,7 @@
 
 #include "types.h"
 
-namespace journal {
+namespace journal_db {
 
 MsgPack::package insertRecord(const std::string &returnAddress, int32_t sa,
                               int32_t da, time_t toper, const std::string &oper);
@@ -22,6 +22,14 @@ MsgPack::package insertRecord(const std::string &returnAddress, int32_t sa,
  * @return MsgPack::package
  **/
 MsgPack::package deleteAll(const std::string &returnAddress);
+
+MsgPack::package deleteOldRecords(const std::string &returnAddress, unsigned amount = 0);
+
+MsgPack::package selectRecordsByParameters(const std::string &returnAddress,
+                                           int32_t sa = -1, int32_t da = -1,
+                                           time_t topermax = 0, time_t topermin = 0);
+
+MsgPack::package selectRecordByMid(const std::string &returnAddress, int64_t mid);
 
 }
 

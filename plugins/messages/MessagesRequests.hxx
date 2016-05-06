@@ -10,7 +10,7 @@
 
 #include "types.h"
 
-namespace messages {
+namespace messages_db {
 
 /**
  * @brief Сформировать запрос на добавление сообщения в базу данных

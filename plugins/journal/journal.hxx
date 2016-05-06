@@ -49,7 +49,7 @@ public:
      *
      * @return int32_t
      **/
-    int32_t getSa() const {
+    int32_t getSA() const {
         return m_sa;
     }
 
@@ -58,7 +58,7 @@ public:
      *
      * @return int32_t
      **/
-    int32_t getDa() const {
+    int32_t getDA() const {
         return m_da;
     }
 

@@ -15,7 +15,7 @@ const string packetType = "Database";
 const string destination = "dataKeeper";
 const string database = "messages";
 
-namespace messages {
+namespace messages_db {
 
 MsgPack::package insertMessage(const std::string &returnAddress, const std::string &source,
                                uint64_t sa, uint64_t da, int32_t type, int64_t create_time,

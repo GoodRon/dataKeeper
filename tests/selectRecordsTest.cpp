@@ -12,18 +12,19 @@
 #include "ipc_msgpack.h"
 #include "MsgPackVariantMap.h"
 #include "MsgPackVariant.h"
+#include "MsgPackVariantArray.h"
 #include "MsgPackProto.hxx"
-#include "MessagesRequests.hxx"
+#include "JournalRequests.hxx"
 
 using namespace std;
 using namespace MsgPack;
 using namespace ipc;
-using namespace messages_db;
+using namespace journal_db;
 
 int main() {
-    fdnotify_recv ipc(SOCK_DEFAULT, "selectMsgTest");
+    fdnotify_recv ipc(SOCK_DEFAULT, "selectRecordsTest");
 
-    auto pckg = selectMessageByMid("selectMsgTest", 1);
+    auto pckg = selectRecordsByParameters("selectRecordsTest", 123);
     busipc_client::RawData data(pckg.begin(), pckg.end());
 
     cout << ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data) << endl;
@@ -38,10 +39,10 @@ int main() {
 
         int ret = select(ipcFd + 1, &fds, 0, 0, nullptr);
 
-        if (ret == -1) {
+        if ( ret == -1 ) {
             isRunning = false;
             return -1;
-        } else if (ret != 0) {
+        } else if ( ret != 0 ) {
             ipc.Recv(message);
 
             MsgPack::package pckg(message.data.begin(), message.data.end());
@@ -59,17 +60,11 @@ int main() {
             auto bin = section["data"].toBin();
             string str(bin.begin(), bin.end());
 
-            cout << "mid - " << section["mid"].toUInt64() << endl
-                 << "source - " << section["source"].toString() << endl
-                 << "sa - " << section["sa"].toUInt64() << endl
-                 << "da - " << section["da"].toUInt64() << endl
-                 << "type - " << section["type"].toInt32() << endl
-                 << "create_time - " << section["create_time"].toUInt64() << endl
-                 << "io_time - " << section["io_time"].toUInt64() << endl
-                 << "exec_status - " << section["exec_Status"].toBool() << endl
-                 << "status - " << section["status"].toInt32() << endl
-                 << "channel - " << section["channel"].toString() << endl
-                 << "data - " << str << endl;
+            auto mids = section["mid"].toArray();
+
+            for (auto& mid: mids) {
+                cout << "mid: " << mid.toInt64() << endl;
+            }
             isRunning = false;
         }
     }

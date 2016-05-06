@@ -118,9 +118,9 @@ bool MessagesConnection::selectMessageByMid(const MsgPack::MsgPackVariantMap &re
 
     transaction t (m_database->begin ());
     try {
-        result r (m_database->query<Message> (query::mid == request["mid"].toInt64()));
+        result r (m_database->query<Message>(query::mid == request["mid"].toInt64()));
 
-        result::iterator i (r.begin ());
+        result::iterator i(r.begin ());
         if (i != r.end()) {
             auto data = i->getData();
             answer["mid"] = static_cast<int64_t>(i->getMid());
@@ -154,7 +154,7 @@ bool MessagesConnection::deleteAll(const MsgPack::MsgPackVariantMap&,
         syslog(LOG_ERR, "Exception: %s", ex.what());
         return false;
     }
-    t.commit ();
+    t.commit();
     return true;
 }
 
@@ -168,7 +168,7 @@ bool MessagesConnection::deleteMessage(const MsgPack::MsgPackVariantMap& request
         syslog(LOG_ERR, "Exception: %s", ex.what());
         return false;
     }
-    t.commit ();
+    t.commit();
     return true;
 }
 
@@ -226,7 +226,7 @@ bool MessagesConnection::deleteOldMessages(const MsgPack::MsgPackVariantMap& req
         syslog(LOG_ERR, "Exception: %s", ex.what());
         return false;
     }
-    t.commit ();
+    t.commit();
     return true;
 }
 
@@ -266,7 +266,7 @@ bool MessagesConnection::selectMessagesByParameters(const MsgPack::MsgPackVarian
     MsgPackVariantArray mids;
     transaction t(m_database->begin ());
     try {
-        result r(m_database->query<Message> (q));
+        result r(m_database->query<Message>(q));
 
         for (auto i = r.begin(); i != r.end(); ++i) {
             mids.push_back(static_cast<int64_t>(i->getMid()));
