@@ -8,10 +8,9 @@
 
 #include <string>
 #include <vector>
+#include <stdint.h>
 
 #include <odb/core.hxx>
-
-// TODO привести типы в соответствие
 
 #pragma db object
 /**
@@ -34,9 +33,9 @@ public:
      * @param data данные
 	 */
     Message(const std::string& source,
-            unsigned long sa, unsigned long da, int type,
-            unsigned long create_time, unsigned long io_time,
-            bool exec_status, int status, const std::string& channel,
+            int64_t sa, int64_t da, int32_t type,
+            int64_t create_time, int64_t io_time,
+            bool exec_status, int32_t status, const std::string& channel,
             const std::vector<char>& data):
 
             m_mid(0), m_source(source), m_sa(sa), m_da(da),
@@ -55,7 +54,7 @@ public:
      *
      * @return unsigned long
      **/
-    unsigned long getMid() const {
+    int32_t getMid() const {
         return m_mid;
     }
 
@@ -73,7 +72,7 @@ public:
      *
      * @return unsigned long
      **/
-    unsigned long getSA() const {
+    int64_t getSA() const {
         return m_sa;
     }
 
@@ -82,7 +81,7 @@ public:
      *
      * @return unsigned long
      **/
-    unsigned long getDA() const {
+    int64_t getDA() const {
         return m_da;
     }
 
@@ -91,7 +90,7 @@ public:
      *
      * @return int
      **/
-    int getType() const {
+    int32_t getType() const {
         return m_type;
     }
 
@@ -100,7 +99,7 @@ public:
      *
      * @return unsigned long
      **/
-    unsigned long getCreateTime() const {
+    int64_t getCreateTime() const {
         return m_create_time;
     }
 
@@ -109,7 +108,7 @@ public:
      *
      * @return unsigned long
      **/
-    unsigned long getIoTime() const {
+    int64_t getIoTime() const {
         return m_io_time;
     }
 
@@ -127,7 +126,7 @@ public:
      *
      * @return int
      **/
-    int getStatus() const {
+    int32_t getStatus() const {
         return m_status;
     }
 
@@ -153,7 +152,7 @@ public:
      * @brief Изменить статус
      * @param status
      **/
-    void setStatus(int status) {
+    void setStatus(int32_t status) {
         m_status = status;
     }
 
@@ -177,7 +176,7 @@ private:
     /**
      * @brief ID в базе
      */
-    unsigned long m_mid;
+    int32_t m_mid;
 
     /**
      * @brief Тип источника
@@ -187,27 +186,27 @@ private:
     /**
      * @brief Источник
      */
-    unsigned long m_sa;
+    int64_t m_sa;
 
     /**
      * @brief Приемник
      */
-    unsigned long m_da;
+    int64_t m_da;
 
     /**
      * @brief Тип данных
      */
-    int m_type;
+    int32_t m_type;
 
     /**
      * @brief Время создания
      */
-    unsigned long m_create_time;
+    int64_t m_create_time;
 
     /**
      * @brief Время приёма/отправки
      */
-    unsigned long m_io_time;
+    int64_t m_io_time;
 
     /**
      * @brief Признак обработки
@@ -217,7 +216,7 @@ private:
     /**
      * @brief Тип сообщения
      */
-    int m_status;
+    int32_t m_status;
 
     /**
      * @brief Канал связи

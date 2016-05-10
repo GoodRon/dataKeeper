@@ -113,9 +113,9 @@ bool JournalConnection::deleteOldRecords(const MsgPack::MsgPackVariantMap& reque
                                          MsgPack::MsgPackVariantMap&) {
     typedef odb::result<Journal> result;
 
-    transaction t(m_database->begin ());
+    transaction t(m_database->begin());
     try {
-        result r(m_database->query<Journal> ());
+        result r(m_database->query<Journal>());
 
         vector<int64_t> mids;
         for (auto i = r.begin(); i != r.end(); ++i) {
@@ -163,7 +163,7 @@ bool JournalConnection::selectRecordsByParameters(const MsgPack::MsgPackVariantM
     MsgPackVariantArray mids;
     transaction t(m_database->begin());
     try {
-        result r(m_database->query<Journal> (q));
+        result r(m_database->query<Journal>(q));
 
         for (auto i = r.begin(); i != r.end(); ++i) {
             mids.push_back(static_cast<int64_t>(i->getMid()));
@@ -183,11 +183,11 @@ bool JournalConnection::selectRecordByMid(const MsgPack::MsgPackVariantMap& requ
     typedef odb::query<Journal> query;
     typedef odb::result<Journal> result;
 
-    transaction t(m_database->begin ());
+    transaction t(m_database->begin());
     try {
         result r(m_database->query<Journal>(query::mid == request["mid"].toInt64()));
 
-        result::iterator i(r.begin ());
+        result::iterator i(r.begin());
         if (i != r.end()) {
             answer["mid"] = static_cast<int64_t>(i->getMid());
             answer["sa"] = static_cast<int32_t>(i->getSA());

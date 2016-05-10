@@ -18,7 +18,7 @@ const string database = "messages";
 namespace messages_db {
 
 MsgPack::package insertMessage(const std::string &returnAddress, const std::string &source,
-                               uint64_t sa, uint64_t da, int32_t type, int64_t create_time,
+                               int64_t sa, int64_t da, int32_t type, int64_t create_time,
                                int64_t io_time, bool exec_status, int32_t status,
                                const std::string &channel, const rawData &data) {
     MsgPackVariantMap msg;
@@ -45,7 +45,7 @@ MsgPack::package insertMessage(const std::string &returnAddress, const std::stri
     return msg.getPackage();
 }
 
-MsgPack::package selectMessageByMid(const std::string &returnAddress, int64_t mid) {
+MsgPack::package selectMessageByMid(const std::string &returnAddress, int32_t mid) {
     MsgPackVariantMap msg;
     msg[mppPacketType] = packetType;
     msg[mppSource] = returnAddress;
@@ -100,7 +100,7 @@ MsgPack::package deleteAll(const std::string &returnAddress) {
     return msg.getPackage();
 }
 
-MsgPack::package deleteMessage(const std::string &returnAddress, int64_t mid) {
+MsgPack::package deleteMessage(const std::string &returnAddress, int32_t mid) {
     MsgPackVariantMap msg;
     msg[mppPacketType] = packetType;
     msg[mppSource] = returnAddress;
@@ -116,8 +116,9 @@ MsgPack::package deleteMessage(const std::string &returnAddress, int64_t mid) {
     return msg.getPackage();
 }
 
-MsgPack::package deleteOldMessages(const std::string &returnAddress, unsigned amount, const std::string &source,
-                                   int64_t sa, int64_t da, int32_t type, int32_t status,
+MsgPack::package deleteOldMessages(const std::string &returnAddress, unsigned amount,
+                                   const std::string &source, int64_t sa, int64_t da,
+                                   int32_t type, int32_t status,
                                    const std::string &channel) {
     MsgPackVariantMap msg;
     msg[mppPacketType] = packetType;
@@ -140,7 +141,8 @@ MsgPack::package deleteOldMessages(const std::string &returnAddress, unsigned am
     return msg.getPackage();
 }
 
-MsgPack::package updateStatus(const std::string &returnAddress, int64_t mid, int32_t status) {
+MsgPack::package updateStatus(const std::string &returnAddress, int32_t mid,
+                              int32_t status) {
     MsgPackVariantMap msg;
     msg[mppPacketType] = packetType;
     msg[mppSource] = returnAddress;
@@ -157,7 +159,7 @@ MsgPack::package updateStatus(const std::string &returnAddress, int64_t mid, int
     return msg.getPackage();
 }
 
-MsgPack::package updateChannel(const std::string &returnAddress, int64_t mid,
+MsgPack::package updateChannel(const std::string &returnAddress, int32_t mid,
                                const std::string &channel) {
     MsgPackVariantMap msg;
     msg[mppPacketType] = packetType;

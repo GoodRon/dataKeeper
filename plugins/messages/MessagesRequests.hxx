@@ -29,7 +29,7 @@ namespace messages_db {
  * @return MsgPack::package
  **/
 MsgPack::package insertMessage(const std::string &returnAddress, const std::string &source,
-                               uint64_t sa, uint64_t da, int32_t type, int64_t create_time,
+                               int64_t sa, int64_t da, int32_t type, int64_t create_time,
                                int64_t io_time, bool exec_status, int32_t status,
                                const std::string &channel, const MsgPack::rawData &data);
 
@@ -40,7 +40,7 @@ MsgPack::package insertMessage(const std::string &returnAddress, const std::stri
  * @param mid уникальный идентификатор сообщения
  * @return MsgPack::package
  **/
-MsgPack::package selectMessageByMid(const std::string &returnAddress, int64_t mid);
+MsgPack::package selectMessageByMid(const std::string &returnAddress, int32_t mid);
 
 /**
  * @brief Сформировать запрос на выдачу mid сообщений согласно критериям поиска
@@ -74,7 +74,7 @@ MsgPack::package deleteAll(const std::string &returnAddress);
  * @param mid уникальный идентификатор сообщения
  * @return MsgPack::package
  **/
-MsgPack::package deleteMessage(const std::string &returnAddress, int64_t mid);
+MsgPack::package deleteMessage(const std::string &returnAddress, int32_t mid);
 
 /**
  * @brief Сформировать запрос на удаление устаревших сообщений
@@ -102,7 +102,7 @@ MsgPack::package deleteOldMessages(const std::string &returnAddress, unsigned am
  * @param status новый тип
  * @return MsgPack::package
  **/
-MsgPack::package updateStatus(const std::string &returnAddress, int64_t mid, int32_t status);
+MsgPack::package updateStatus(const std::string &returnAddress, int32_t mid, int32_t status);
 
 /**
  * @brief Сформировать запрос на обновление канала связи сообщения
@@ -112,7 +112,7 @@ MsgPack::package updateStatus(const std::string &returnAddress, int64_t mid, int
  * @param channel новый канал связи
  * @return MsgPack::package
  **/
-MsgPack::package updateChannel(const std::string &returnAddress, int64_t mid,
+MsgPack::package updateChannel(const std::string &returnAddress, int32_t mid,
                                const std::string &channel);
 
 }
