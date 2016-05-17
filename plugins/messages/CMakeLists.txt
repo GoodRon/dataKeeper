@@ -4,7 +4,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/")
 find_package(ODB REQUIRED OPTIONAL_COMPONENTS sqlite pgsql mysql)
 include(${ODB_USE_FILE})
 
-foreach(database pgsql sqlite) # mysql)
+foreach(database pgsql sqlite mysql)
     set(DATABASE_DEFS)
 
     if (${database} STREQUAL sqlite)
@@ -25,8 +25,9 @@ foreach(database pgsql sqlite) # mysql)
             DEFS ${DATABASE_DEFS}
             GENERATE_QUERY
             GENERATE_SCHEMA
-            #SCHEMA_FORMAT sql
-            SCHEMA_FORMAT embedded)
+            OMIT_DROP
+            SCHEMA_FORMAT sql)
+#            SCHEMA_FORMAT embedded)
 
     set(PLUGIN_NAME messagesdb_${database})
 

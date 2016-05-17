@@ -86,6 +86,7 @@ void MessagesConnection::instantiateDatabase() {
     }
 
     auto db = create_database(args);
+    create_embedded_schema(db);
     syslog(LOG_INFO, "Database was instantiated");
     m_database.reset(db);
 }
@@ -116,11 +117,11 @@ bool MessagesConnection::selectMessageByMid(const MsgPack::MsgPackVariantMap &re
     typedef odb::query<Message> query;
     typedef odb::result<Message> result;
 
-    transaction t (m_database->begin ());
+    transaction t (m_database->begin());
     try {
         result r (m_database->query<Message>(query::mid == request["mid"].toInt64()));
 
-        result::iterator i(r.begin ());
+        result::iterator i(r.begin());
         if (i != r.end()) {
             auto data = i->getData();
             answer["mid"] = static_cast<int64_t>(i->getMid());
@@ -140,13 +141,13 @@ bool MessagesConnection::selectMessageByMid(const MsgPack::MsgPackVariantMap &re
         syslog(LOG_ERR, "Exception: %s", ex.what());
         return false;
     }
-    t.commit ();
+    t.commit();
     return true;
 }
 
 bool MessagesConnection::deleteAll(const MsgPack::MsgPackVariantMap&,
                                    MsgPack::MsgPackVariantMap&) {
-    transaction t(m_database->begin ());
+    transaction t(m_database->begin());
     try {
         m_database->erase_query<Message>();
     } catch (odb::exception& ex) {
@@ -160,7 +161,7 @@ bool MessagesConnection::deleteAll(const MsgPack::MsgPackVariantMap&,
 
 bool MessagesConnection::deleteMessage(const MsgPack::MsgPackVariantMap& request,
                                        MsgPack::MsgPackVariantMap&) {
-    transaction t (m_database->begin ());
+    transaction t (m_database->begin());
     try {
         m_database->erase<Message>(request["mid"].toInt64());
     } catch (odb::exception& ex) {
@@ -205,9 +206,9 @@ bool MessagesConnection::deleteOldMessages(const MsgPack::MsgPackVariantMap& req
 
     q = q + query("ORDER BY" + query::create_time);
 
-    transaction t (m_database->begin ());
+    transaction t (m_database->begin());
     try {
-        result r (m_database->query<Message> (q));
+        result r (m_database->query<Message>(q));
 
         vector<int64_t> mids;
 
@@ -264,7 +265,7 @@ bool MessagesConnection::selectMessagesByParameters(const MsgPack::MsgPackVarian
     q = q + query("ORDER BY" + query::create_time);
 
     MsgPackVariantArray mids;
-    transaction t(m_database->begin ());
+    transaction t(m_database->begin());
     try {
         result r(m_database->query<Message>(q));
 
@@ -299,7 +300,7 @@ bool MessagesConnection::updateStatus(const MsgPack::MsgPackVariantMap& request,
 
 bool MessagesConnection::updateChannel(const MsgPack::MsgPackVariantMap& request,
                                        MsgPack::MsgPackVariantMap&) {
-    transaction t(m_database->begin ());
+    transaction t(m_database->begin());
     try {
         shared_ptr<Message> msg (m_database->load<Message>(request["mid"].toInt64()));
         msg->setChannel(request["channel"].toString());
