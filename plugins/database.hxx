@@ -29,6 +29,11 @@
 #  error unknown database; did you forget to define the DATABASE_* macros?
 #endif
 
+/**
+ * @brief Функция для инициализации схемы базы данных
+ *
+ * @param database* db указатель на базу данных
+ */
 inline void create_embedded_schema(odb::database *db) {
     using namespace odb::core;
 
