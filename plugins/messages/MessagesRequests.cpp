@@ -22,10 +22,14 @@ MsgPack::package insertMessage(const std::string &returnAddress, const std::stri
                                int64_t io_time, bool exec_status, int32_t status,
                                const std::string &channel, const rawData &data) {
     MsgPackVariantMap msg;
-    msg[mppPacketType] = packetType;
-    msg[mppSource] = returnAddress;
-    msg[mppDestination] = destination;
-    msg[mppID] = 1;
+    msg[msPacketType] = packetType;
+    msg[msID] = 1;
+
+    MsgPackVariantMap address;
+    address[ssSource] = returnAddress;
+    address[ssDestination] = destination;
+
+    msg[asServiceSection] = address;
 
     MsgPackVariantMap request;
     request["database"] = database;
@@ -41,23 +45,27 @@ MsgPack::package insertMessage(const std::string &returnAddress, const std::stri
     request["channel"] = channel;
     request["data"] = data;
 
-    msg[mppAdditionalSection] = request;
+    msg[asUserSection] = request;
     return msg.getPackage();
 }
 
 MsgPack::package selectMessageByMid(const std::string &returnAddress, int32_t mid) {
     MsgPackVariantMap msg;
-    msg[mppPacketType] = packetType;
-    msg[mppSource] = returnAddress;
-    msg[mppDestination] = destination;
-    msg[mppID] = 1;
+    msg[msPacketType] = packetType;
+    msg[msID] = 1;
+
+    MsgPackVariantMap address;
+    address[ssSource] = returnAddress;
+    address[ssDestination] = destination;
+
+    msg[asServiceSection] = address;
 
     MsgPackVariantMap request;
     request["database"] = database;
     request["request"] = "selectMessageByMid";
     request["mid"] = mid;
 
-    msg[mppAdditionalSection] = request;
+    msg[asUserSection] = request;
     return msg.getPackage();
 }
 
@@ -66,10 +74,14 @@ MsgPack::package selectMessagesByParameters(const std::string &returnAddress,
                                             int64_t da, int32_t type, int32_t status,
                                             const std::string &channel) {
     MsgPackVariantMap msg;
-    msg[mppPacketType] = packetType;
-    msg[mppSource] = returnAddress;
-    msg[mppDestination] = destination;
-    msg[mppID] = 1;
+    msg[msPacketType] = packetType;
+    msg[msID] = 1;
+
+    MsgPackVariantMap address;
+    address[ssSource] = returnAddress;
+    address[ssDestination] = destination;
+
+    msg[asServiceSection] = address;
 
     MsgPackVariantMap request;
     request["database"] = database;
@@ -81,38 +93,46 @@ MsgPack::package selectMessagesByParameters(const std::string &returnAddress,
     request["status"] = status;
     request["channel"] = channel;
 
-    msg[mppAdditionalSection] = request;
+    msg[asUserSection] = request;
     return msg.getPackage();
 }
 
 MsgPack::package deleteAll(const std::string &returnAddress) {
     MsgPackVariantMap msg;
-    msg[mppPacketType] = packetType;
-    msg[mppSource] = returnAddress;
-    msg[mppDestination] = destination;
-    msg[mppID] = 1;
+    msg[msPacketType] = packetType;
+    msg[msID] = 1;
+
+    MsgPackVariantMap address;
+    address[ssSource] = returnAddress;
+    address[ssDestination] = destination;
+
+    msg[asServiceSection] = address;
 
     MsgPackVariantMap request;
     request["database"] = database;
     request["request"] = "deleteAll";
 
-    msg[mppAdditionalSection] = request;
+    msg[asUserSection] = request;
     return msg.getPackage();
 }
 
 MsgPack::package deleteMessage(const std::string &returnAddress, int32_t mid) {
     MsgPackVariantMap msg;
-    msg[mppPacketType] = packetType;
-    msg[mppSource] = returnAddress;
-    msg[mppDestination] = destination;
-    msg[mppID] = 1;
+    msg[msPacketType] = packetType;
+    msg[msID] = 1;
+
+    MsgPackVariantMap address;
+    address[ssSource] = returnAddress;
+    address[ssDestination] = destination;
+
+    msg[asServiceSection] = address;
 
     MsgPackVariantMap request;
     request["database"] = database;
     request["request"] = "deleteMessage";
     request["mid"] = mid;
 
-    msg[mppAdditionalSection] = request;
+    msg[asUserSection] = request;
     return msg.getPackage();
 }
 
@@ -121,10 +141,14 @@ MsgPack::package deleteOldMessages(const std::string &returnAddress, unsigned am
                                    int32_t type, int32_t status,
                                    const std::string &channel) {
     MsgPackVariantMap msg;
-    msg[mppPacketType] = packetType;
-    msg[mppSource] = returnAddress;
-    msg[mppDestination] = destination;
-    msg[mppID] = 1;
+    msg[msPacketType] = packetType;
+    msg[msID] = 1;
+
+    MsgPackVariantMap address;
+    address[ssSource] = returnAddress;
+    address[ssDestination] = destination;
+
+    msg[asServiceSection] = address;
 
     MsgPackVariantMap request;
     request["database"] = database;
@@ -137,17 +161,21 @@ MsgPack::package deleteOldMessages(const std::string &returnAddress, unsigned am
     request["channel"] = channel;
     request["amount"] = amount;
 
-    msg[mppAdditionalSection] = request;
+    msg[asUserSection] = request;
     return msg.getPackage();
 }
 
 MsgPack::package updateStatus(const std::string &returnAddress, int32_t mid,
                               int32_t status) {
     MsgPackVariantMap msg;
-    msg[mppPacketType] = packetType;
-    msg[mppSource] = returnAddress;
-    msg[mppDestination] = destination;
-    msg[mppID] = 1;
+    msg[msPacketType] = packetType;
+    msg[msID] = 1;
+
+    MsgPackVariantMap address;
+    address[ssSource] = returnAddress;
+    address[ssDestination] = destination;
+
+    msg[asServiceSection] = address;
 
     MsgPackVariantMap request;
     request["database"] = database;
@@ -155,17 +183,21 @@ MsgPack::package updateStatus(const std::string &returnAddress, int32_t mid,
     request["mid"] = mid;
     request["status"] = status;
 
-    msg[mppAdditionalSection] = request;
+    msg[asUserSection] = request;
     return msg.getPackage();
 }
 
 MsgPack::package updateChannel(const std::string &returnAddress, int32_t mid,
                                const std::string &channel) {
     MsgPackVariantMap msg;
-    msg[mppPacketType] = packetType;
-    msg[mppSource] = returnAddress;
-    msg[mppDestination] = destination;
-    msg[mppID] = 1;
+    msg[msPacketType] = packetType;
+    msg[msID] = 1;
+
+    MsgPackVariantMap address;
+    address[ssSource] = returnAddress;
+    address[ssDestination] = destination;
+
+    msg[asServiceSection] = address;
 
     MsgPackVariantMap request;
     request["database"] = database;
@@ -173,7 +205,7 @@ MsgPack::package updateChannel(const std::string &returnAddress, int32_t mid,
     request["mid"] = mid;
     request["channel"] = channel;
 
-    msg[mppAdditionalSection] = request;
+    msg[asUserSection] = request;
     return msg.getPackage();
 }
 

@@ -18,6 +18,8 @@ foreach(database pgsql sqlite mysql)
     set(ODB_HEADERS journal.hxx)
     set(PLUGIN_SOURCES JournalConnection.cpp JournalPlugin.cpp)
 
+    set(DB_NAME journal)
+
     odb_compile(PLUGIN_SOURCES
             FILES ${ODB_HEADERS}
             MULTI_DATABASE dynamic
@@ -26,10 +28,11 @@ foreach(database pgsql sqlite mysql)
             GENERATE_QUERY
             GENERATE_SCHEMA
             OMIT_DROP
+            SCHEMA_NAME ${DB_NAME}
 #            SCHEMA_FORMAT sql)
             SCHEMA_FORMAT embedded)
 
-    set(PLUGIN_NAME journaldb_${database})
+    set(PLUGIN_NAME ${DB_NAME}db_${database})
 
     add_library(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
     target_link_libraries(${PLUGIN_NAME} odb odb-${database} jsonConfigHelper)

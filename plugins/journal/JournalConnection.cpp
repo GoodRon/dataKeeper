@@ -73,7 +73,7 @@ void JournalConnection::instantiateDatabase() {
     }
 
     auto db = create_database(args);
-    create_embedded_schema(db);
+    create_embedded_schema(db, "journal");
     syslog(LOG_INFO, "Database was instantiated");
     m_database.reset(db);
 }

@@ -201,28 +201,43 @@ void KeeperApplication::processIpcMsg(const ipc::msg_t& msg) {
 void KeeperApplication::executeRequest(const MsgPackVariantMap &message,
                                        MsgPackVariantMap &answer) {
     // Если тип пакета не тот - игнорируем
-    if (!message.contain(static_cast<int>(mppPacketType))) {
+    if (!message.contain(static_cast<int>(msPacketType))) {
         syslog(LOG_ERR, "Wrong package type");
         return;
     }
 
-    if (message.at(mppPacketType).toString() != "Database") {
-        syslog(LOG_ERR, "Wrong package adresse");
+    if (message.at(msPacketType).toString() != "Database") {
+        syslog(LOG_ERR, "Wrong package type");
         return;
     }
 
     // Добываем служебную дополнительную секцию
-    if (!message.contain(static_cast<int>(mppAdditionalSection))) {
-        syslog(LOG_ERR, "There is no additional section in package");
+    if (!message.contain(static_cast<int>(asServiceSection))) {
+        syslog(LOG_ERR, "There is no service section in package");
         return;
     }
 
-    auto value = message.at(mppAdditionalSection);
+    auto valueService = message.at(asServiceSection);
     bool ret = false;
-    auto request = value.toMap(&ret);
+    auto address = valueService.toMap(&ret);
     // Если не можем преобразовать к мэпу - игнорируем
     if (!ret) {
-        syslog(LOG_ERR, "Can't cast additional section to map");
+        syslog(LOG_ERR, "Can't cast service section to map");
+        return;
+    }
+
+    // Добываем пользовательскую секцию
+    if (!message.contain(static_cast<int>(asUserSection))) {
+        syslog(LOG_ERR, "There is no user section in package");
+        return;
+    }
+
+    auto valueUser = message.at(asUserSection);
+    ret = false;
+    auto request = valueUser.toMap(&ret);
+    // Если не можем преобразовать к мэпу - игнорируем
+    if (!ret) {
+        syslog(LOG_ERR, "Can't cast user section to map");
         return;
     }
 
@@ -250,15 +265,13 @@ void KeeperApplication::executeRequest(const MsgPackVariantMap &message,
     }
 
     // Формируем ответ
-    answer[mppPacketType] = message[mppPacketType];
-    if (message.contain(static_cast<int>(mppDestination))) {
-        answer[mppSource] = message[mppDestination];
-    }
-    if (message.contain(static_cast<int>(mppSource))) {
-        answer[mppDestination] = message[mppSource];
-    }
-    if (message.contain(static_cast<int>(mppSource))) {
-        answer[mppID] = message[mppID];
-    }
-    answer[mppAdditionalSection] = MsgPackVariant(result);
+    answer[msPacketType] = message[msPacketType];
+    answer[msID] = message[msID];
+
+    MsgPackVariantMap answerAddress;
+    answerAddress[ssSource] = address.at(ssDestination).toString();
+    answerAddress[ssDestination] = address.at(ssSource).toString();
+
+    answer[asServiceSection] = answerAddress;
+    answer[asUserSection] = MsgPackVariant(result);
 }

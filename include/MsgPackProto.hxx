@@ -7,15 +7,27 @@
 #define MSGPACKPROTO_HXX
 
 /**
- * @brief Перечисление параметров обязательной секции
+ * @brief Перечисление ключей обязательной секции
  */
-enum MsgPackKey {
-    mppUserSection = -2,
-    mppAdditionalSection = -1,
-    mppPacketType = 0,
-    mppSource = 1,
-    mppDestination = 2,
-    mppID = 3,
+enum MsgPackMandatorySection {
+    msPacketType = 0,
+    msID = 1
+};
+
+/**
+ * @brief Перечисление ключей дополнительных секций
+ */
+enum MsgPackAdditional {
+    asUserSection = -2,
+    asServiceSection = -1
+};
+
+/**
+ * @brief Перечисление ключей служебной дополнительной секции
+ */
+enum MsgPackServiceSection {
+    ssSource = 0,
+    ssDestination = 1
 };
 
 #endif // MSGPACKPROTO_HXX

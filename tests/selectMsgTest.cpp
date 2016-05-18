@@ -55,7 +55,7 @@ int main() {
                 break;
             }
 
-            auto section = answer.at(mppAdditionalSection).toMap(&ret);
+            auto section = answer.at(asUserSection).toMap(&ret);
             auto bin = section["data"].toBin();
             string str(bin.begin(), bin.end());
 

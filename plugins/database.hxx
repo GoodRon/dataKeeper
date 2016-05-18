@@ -33,8 +33,9 @@
  * @brief Функция для инициализации схемы базы данных
  *
  * @param database* db указатель на базу данных
+ * @param string name имя схемы
  */
-inline void create_embedded_schema(odb::database *db) {
+inline void create_embedded_schema(odb::database *db, const std::string& name = "") {
     using namespace odb::core;
 
     // Create the database schema. Due to bugs in SQLite foreign key
@@ -49,7 +50,7 @@ inline void create_embedded_schema(odb::database *db) {
     transaction t;
     try {
         t.reset(c->begin());
-        schema_catalog::create_schema(*db);
+        schema_catalog::create_schema(*db, name);
         t.commit();
     } catch(odb::exception& ex) {
         t.rollback();
@@ -92,8 +93,6 @@ inline odb::database* create_database(const std::vector<std::string>& cmdline) {
 #elif defined(DATABASE_MSSQL)
     db = new odb::mssql::database(argc, argv);
 #endif
-
-    create_embedded_schema(db);
     return db;
 }
 

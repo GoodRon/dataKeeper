@@ -20,10 +20,14 @@ namespace journal_db {
 MsgPack::package insertRecord(const std::string &returnAddress, int32_t sa,
                               int32_t da, time_t toper, const std::string &oper) {
     MsgPackVariantMap msg;
-    msg[mppPacketType] = packetType;
-    msg[mppSource] = returnAddress;
-    msg[mppDestination] = destination;
-    msg[mppID] = 1;
+    msg[msPacketType] = packetType;
+    msg[msID] = 1;
+
+    MsgPackVariantMap address;
+    address[ssSource] = returnAddress;
+    address[ssDestination] = destination;
+
+    msg[asServiceSection] = address;
 
     MsgPackVariantMap request;
     request["database"] = database;
@@ -33,38 +37,46 @@ MsgPack::package insertRecord(const std::string &returnAddress, int32_t sa,
     request["toper"] = toper;
     request["oper"] = oper;
 
-    msg[mppAdditionalSection] = request;
+    msg[asUserSection] = request;
     return msg.getPackage();
 }
 
 MsgPack::package deleteAll(const std::string &returnAddress) {
     MsgPackVariantMap msg;
-    msg[mppPacketType] = packetType;
-    msg[mppSource] = returnAddress;
-    msg[mppDestination] = destination;
-    msg[mppID] = 1;
+    msg[msPacketType] = packetType;
+    msg[msID] = 1;
+
+    MsgPackVariantMap address;
+    address[ssSource] = returnAddress;
+    address[ssDestination] = destination;
+
+    msg[asServiceSection] = address;
 
     MsgPackVariantMap request;
     request["database"] = database;
     request["request"] = "deleteAll";
 
-    msg[mppAdditionalSection] = request;
+    msg[asUserSection] = request;
     return msg.getPackage();
 }
 
 MsgPack::package deleteOldRecords(const std::string &returnAddress, unsigned amount) {
     MsgPackVariantMap msg;
-    msg[mppPacketType] = packetType;
-    msg[mppSource] = returnAddress;
-    msg[mppDestination] = destination;
-    msg[mppID] = 1;
+    msg[msPacketType] = packetType;
+    msg[msID] = 1;
+
+    MsgPackVariantMap address;
+    address[ssSource] = returnAddress;
+    address[ssDestination] = destination;
+
+    msg[asServiceSection] = address;
 
     MsgPackVariantMap request;
     request["database"] = database;
     request["request"] = "deleteOldRecords";
     request["amount"] = amount;
 
-    msg[mppAdditionalSection] = request;
+    msg[asUserSection] = request;
     return msg.getPackage();
 }
 
@@ -72,10 +84,14 @@ MsgPack::package selectRecordsByParameters(const std::string &returnAddress,
                                            int32_t sa, int32_t da,
                                            time_t topermax, time_t topermin) {
     MsgPackVariantMap msg;
-    msg[mppPacketType] = packetType;
-    msg[mppSource] = returnAddress;
-    msg[mppDestination] = destination;
-    msg[mppID] = 1;
+    msg[msPacketType] = packetType;
+    msg[msID] = 1;
+
+    MsgPackVariantMap address;
+    address[ssSource] = returnAddress;
+    address[ssDestination] = destination;
+
+    msg[asServiceSection] = address;
 
     MsgPackVariantMap request;
     request["database"] = database;
@@ -85,23 +101,27 @@ MsgPack::package selectRecordsByParameters(const std::string &returnAddress,
     request["topermin"] = topermin;
     request["topermax"] = topermax;
 
-    msg[mppAdditionalSection] = request;
+    msg[asUserSection] = request;
     return msg.getPackage();
 }
 
 MsgPack::package selectRecordByMid(const std::string &returnAddress, int64_t mid) {
     MsgPackVariantMap msg;
-    msg[mppPacketType] = packetType;
-    msg[mppSource] = returnAddress;
-    msg[mppDestination] = destination;
-    msg[mppID] = 1;
+    msg[msPacketType] = packetType;
+    msg[msID] = 1;
+
+    MsgPackVariantMap address;
+    address[ssSource] = returnAddress;
+    address[ssDestination] = destination;
+
+    msg[asServiceSection] = address;
 
     MsgPackVariantMap request;
     request["database"] = database;
     request["request"] = "selectRecordByMid";
     request["mid"] = mid;
 
-    msg[mppAdditionalSection] = request;
+    msg[asUserSection] = request;
     return msg.getPackage();
 }
 
