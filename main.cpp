@@ -12,7 +12,8 @@ using namespace std;
 
 int main(int argc, char** argv) {
     int rez = 0;
-    string config("/etc/dataKeeper.conf");
+    const string defaultConfig("/etc/dataKeeper.conf");
+    string config(defaultConfig);
     while ( (rez = getopt(argc,argv,"c:h")) != -1 ) {
         switch (rez) {
             case 'c':
@@ -21,6 +22,8 @@ int main(int argc, char** argv) {
             case 'h':
                 cout << "dataKeeper - plugin based database manager" << endl;
                 cout << "Usage: dataKeeper [options]" << endl;
+                cout << "If no config path specified, default " << defaultConfig
+                     << " will be used" << endl;
                 cout << "-c <path_to_config> - path to configuration file" << endl;
                 cout << "-h - print this help" << endl;
                 return 0;
