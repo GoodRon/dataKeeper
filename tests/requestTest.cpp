@@ -25,19 +25,17 @@ int main() {
 
     string str = "the long string for the testing purposes with no meaning";
 
-    auto pckg = insertMessage("requestTest", "unknown", 512, 1024, 256,
-                              system_clock::to_time_t(system_clock::now()),
-                              system_clock::to_time_t(system_clock::now()),
-                              true, 0, "TestChannel", rawData(str.begin(), str.end()));
+    auto pckg = insertMessage("unknown", 512, 1024, 256, system_clock::to_time_t(system_clock::now()),
+                              system_clock::to_time_t(system_clock::now()), true, 0, "TestChannel",
+                              rawData(str.begin(), str.end()), "requestTest");
 
     busipc_client::RawData data(pckg.begin(), pckg.end());
 
     ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data);
 
-    pckg = insertMessage("requestTest", "someone", 312, 42, 512,
-                         system_clock::to_time_t(system_clock::now()),
-                         system_clock::to_time_t(system_clock::now()),
-                         true, 0, "TestChannel", rawData(str.begin(), str.end()));
+    pckg = insertMessage("someone", 312, 42, 512, system_clock::to_time_t(system_clock::now()),
+                         system_clock::to_time_t(system_clock::now()), true, 0, "TestChannel",
+                         rawData(str.begin(), str.end()), "requestTest");
 
     busipc_client::RawData newData(pckg.begin(), pckg.end());
 

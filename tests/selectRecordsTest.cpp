@@ -24,7 +24,7 @@ using namespace journal_db;
 int main() {
     fdnotify_recv ipc(SOCK_DEFAULT, "selectRecordsTest");
 
-    auto pckg = selectRecordsByParameters("selectRecordsTest", 123);
+    auto pckg = selectRecordsByParameters(123, 0, 0, 0, "selectRecordsTest");
     busipc_client::RawData data(pckg.begin(), pckg.end());
 
     cout << ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data) << endl;

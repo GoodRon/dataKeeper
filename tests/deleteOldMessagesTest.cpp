@@ -14,7 +14,7 @@ using namespace messages_db;
 int main() {
     fdnotify_recv ipc(SOCK_DEFAULT, "deleteAllTest");
 
-    auto pckg = deleteOldMessages("deleteAllTest", 5, "someone", -1, -1, -1, 0, "");
+    auto pckg = deleteOldMessages(5, "someone", -1, -1, -1, 0, "", "deleteAllTest");
     busipc_client::RawData data(pckg.begin(), pckg.end());
     ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data);
     return 0;

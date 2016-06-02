@@ -20,9 +20,8 @@ using namespace journal_db;
 int main() {
     fdnotify_recv ipc(SOCK_DEFAULT, "insertRecordTest");
 
-    auto pckg = insertRecord("insertRecordTest", 123, 456,
-                             system_clock::to_time_t(system_clock::now()),
-                             "test operation");
+    auto pckg = insertRecord(123, 456, system_clock::to_time_t(system_clock::now()), "test operation",
+                             "insertRecordTest");
     busipc_client::RawData data(pckg.begin(), pckg.end());
     ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data);
     return 0;

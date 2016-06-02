@@ -17,8 +17,8 @@ const string database = "journal";
 
 namespace journal_db {
 
-MsgPack::package insertRecord(const std::string &returnAddress, int32_t sa,
-                              int32_t da, time_t toper, const std::string &oper) {
+MsgPack::package insertRecord(int32_t sa, int32_t da, time_t toper, const std::string& oper,
+                              const std::string& returnAddress) {
     MsgPackVariantMap msg;
     msg[msPacketType] = packetType;
     msg[msID] = 1;
@@ -60,7 +60,7 @@ MsgPack::package deleteAll(const std::string &returnAddress) {
     return msg.getPackage();
 }
 
-MsgPack::package deleteOldRecords(const std::string &returnAddress, unsigned amount) {
+MsgPack::package deleteOldRecords(unsigned int amount, const std::string& returnAddress) {
     MsgPackVariantMap msg;
     msg[msPacketType] = packetType;
     msg[msID] = 1;
@@ -80,9 +80,8 @@ MsgPack::package deleteOldRecords(const std::string &returnAddress, unsigned amo
     return msg.getPackage();
 }
 
-MsgPack::package selectRecordsByParameters(const std::string &returnAddress,
-                                           int32_t sa, int32_t da,
-                                           time_t topermax, time_t topermin) {
+MsgPack::package selectRecordsByParameters(int32_t sa, int32_t da, time_t topermax, time_t topermin,
+                                           const std::string& returnAddress) {
     MsgPackVariantMap msg;
     msg[msPacketType] = packetType;
     msg[msID] = 1;
@@ -105,7 +104,7 @@ MsgPack::package selectRecordsByParameters(const std::string &returnAddress,
     return msg.getPackage();
 }
 
-MsgPack::package selectRecordByMid(const std::string &returnAddress, int64_t mid) {
+MsgPack::package selectRecordByMid(int64_t mid, const std::string& returnAddress) {
     MsgPackVariantMap msg;
     msg[msPacketType] = packetType;
     msg[msID] = 1;

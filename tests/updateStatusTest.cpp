@@ -19,7 +19,7 @@ using namespace messages_db;
 
 int main() {
     fdnotify_recv ipc(SOCK_DEFAULT, "updateStatusTest");
-    auto pckg = updateStatus("updateStatusTest", 1, 5);
+    auto pckg = updateStatus(1, 5, "updateStatusTest");
     busipc_client::RawData data(pckg.begin(), pckg.end());
     ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data);
     return 0;

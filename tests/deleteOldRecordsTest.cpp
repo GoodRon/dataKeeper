@@ -14,7 +14,7 @@ using namespace journal_db;
 int main() {
     fdnotify_recv ipc(SOCK_DEFAULT, "deleteAllTest");
 
-    auto pckg = deleteOldRecords("deleteAllTest", 5);
+    auto pckg = deleteOldRecords(5, "deleteAllTest");
     busipc_client::RawData data(pckg.begin(), pckg.end());
     ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data);
     return 0;

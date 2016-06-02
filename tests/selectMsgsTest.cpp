@@ -24,7 +24,7 @@ using namespace messages_db;
 int main() {
     fdnotify_recv ipc(SOCK_DEFAULT, "selectMsgsTest");
 
-    auto pckg = selectMessagesByParameters("selectMsgsTest", "unknown", -1, -1, -1, 0, "");
+    auto pckg = selectMessagesByParameters("unknown", -1, -1, -1, 0, "", "selectMsgsTest");
     busipc_client::RawData data(pckg.begin(), pckg.end());
 
     cout << ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data) << endl;

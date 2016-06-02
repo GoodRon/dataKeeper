@@ -23,7 +23,7 @@ using namespace journal_db;
 int main() {
     fdnotify_recv ipc(SOCK_DEFAULT, "selectRecordTest");
 
-    auto pckg = selectRecordByMid("selectRecordTest", 1);
+    auto pckg = selectRecordByMid(1, "selectRecordTest");
     busipc_client::RawData data(pckg.begin(), pckg.end());
 
     cout << ipc.SendRep(IpcCmd_Msgpack, 1, "dataKeeper", data) << endl;

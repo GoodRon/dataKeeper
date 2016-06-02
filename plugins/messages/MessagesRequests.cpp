@@ -17,10 +17,9 @@ const string database = "messages";
 
 namespace messages_db {
 
-MsgPack::package insertMessage(const std::string &returnAddress, const std::string &source,
-                               int64_t sa, int64_t da, int32_t type, int64_t create_time,
-                               int64_t io_time, bool exec_status, int32_t status,
-                               const std::string &channel, const rawData &data) {
+MsgPack::package insertMessage(const std::string& source, int64_t sa, int64_t da, int32_t type, int64_t create_time,
+                               int64_t io_time, bool exec_status, int32_t status, const std::string& channel,
+                               const MsgPack::rawData& data, const std::string& returnAddress) {
     MsgPackVariantMap msg;
     msg[msPacketType] = packetType;
     msg[msID] = 1;
@@ -49,7 +48,7 @@ MsgPack::package insertMessage(const std::string &returnAddress, const std::stri
     return msg.getPackage();
 }
 
-MsgPack::package selectMessageByMid(const std::string &returnAddress, int32_t mid) {
+MsgPack::package selectMessageByMid(int32_t mid, const std::string& returnAddress) {
     MsgPackVariantMap msg;
     msg[msPacketType] = packetType;
     msg[msID] = 1;
@@ -69,10 +68,9 @@ MsgPack::package selectMessageByMid(const std::string &returnAddress, int32_t mi
     return msg.getPackage();
 }
 
-MsgPack::package selectMessagesByParameters(const std::string &returnAddress,
-                                            const std::string &source, int64_t sa,
-                                            int64_t da, int32_t type, int32_t status,
-                                            const std::string &channel) {
+MsgPack::package selectMessagesByParameters(const std::string& source, int64_t sa, int64_t da, int32_t type,
+                                            int32_t status, const std::string& channel,
+                                            const std::string& returnAddress) {
     MsgPackVariantMap msg;
     msg[msPacketType] = packetType;
     msg[msID] = 1;
@@ -116,7 +114,7 @@ MsgPack::package deleteAll(const std::string &returnAddress) {
     return msg.getPackage();
 }
 
-MsgPack::package deleteMessage(const std::string &returnAddress, int32_t mid) {
+MsgPack::package deleteMessage(int32_t mid, const std::string& returnAddress) {
     MsgPackVariantMap msg;
     msg[msPacketType] = packetType;
     msg[msID] = 1;
@@ -136,10 +134,8 @@ MsgPack::package deleteMessage(const std::string &returnAddress, int32_t mid) {
     return msg.getPackage();
 }
 
-MsgPack::package deleteOldMessages(const std::string &returnAddress, unsigned amount,
-                                   const std::string &source, int64_t sa, int64_t da,
-                                   int32_t type, int32_t status,
-                                   const std::string &channel) {
+MsgPack::package deleteOldMessages(unsigned int amount, const std::string& source, int64_t sa, int64_t da, int32_t type,
+                                   int32_t status, const std::string& channel, const std::string& returnAddress) {
     MsgPackVariantMap msg;
     msg[msPacketType] = packetType;
     msg[msID] = 1;
@@ -165,8 +161,7 @@ MsgPack::package deleteOldMessages(const std::string &returnAddress, unsigned am
     return msg.getPackage();
 }
 
-MsgPack::package updateStatus(const std::string &returnAddress, int32_t mid,
-                              int32_t status) {
+MsgPack::package updateStatus(int32_t mid, int32_t status, const std::string& returnAddress) {
     MsgPackVariantMap msg;
     msg[msPacketType] = packetType;
     msg[msID] = 1;
@@ -187,8 +182,7 @@ MsgPack::package updateStatus(const std::string &returnAddress, int32_t mid,
     return msg.getPackage();
 }
 
-MsgPack::package updateChannel(const std::string &returnAddress, int32_t mid,
-                               const std::string &channel) {
+MsgPack::package updateChannel(int32_t mid, const std::string& channel, const std::string& returnAddress) {
     MsgPackVariantMap msg;
     msg[msPacketType] = packetType;
     msg[msID] = 1;

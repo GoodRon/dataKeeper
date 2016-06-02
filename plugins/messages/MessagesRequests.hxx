@@ -15,7 +15,6 @@ namespace messages_db {
 /**
  * @brief Сформировать запрос на добавление сообщения в базу данных
  *
- * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @param source тип источника сообщения
  * @param sa номер устройства-источника сообщения в системе
  * @param da номер устройства-приемника сообщения в системе
@@ -26,38 +25,38 @@ namespace messages_db {
  * @param status тип сообщения
  * @param channel имя канала связи
  * @param data данные сообщения
+ * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @return MsgPack::package
  **/
-MsgPack::package insertMessage(const std::string &returnAddress, const std::string &source,
-                               int64_t sa, int64_t da, int32_t type, int64_t create_time,
-                               int64_t io_time, bool exec_status, int32_t status,
-                               const std::string &channel, const MsgPack::rawData &data);
+MsgPack::package insertMessage(const std::string& source, int64_t sa, int64_t da, int32_t type,
+                               int64_t create_time, int64_t io_time, bool exec_status, int32_t status,
+                               const std::string& channel, const MsgPack::rawData& data,
+                               const std::string& returnAddress = "");
 
 /**
  * @brief Сформировать запрос на выдачу сообщения по его mid
  *
- * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @param mid уникальный идентификатор сообщения
+ * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @return MsgPack::package
  **/
-MsgPack::package selectMessageByMid(const std::string &returnAddress, int32_t mid);
+MsgPack::package selectMessageByMid(int32_t mid, const std::string& returnAddress = "");
 
 /**
  * @brief Сформировать запрос на выдачу mid сообщений согласно критериям поиска
  *
- * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @param source тип источника сообщения ("" - не учитывается)
  * @param sa номер устройства-источника сообщения в системе (-1 - не учитывается)
  * @param da номер устройства-приемника сообщения в системе (-1 не учитывается)
  * @param type тип данных сообщения (-1 - не учитывается)
  * @param status тип сообщения (-1 - не учитывается)
  * @param channel имя канала связи ("" - не учитывается)
+ * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @return MsgPack::package
  **/
-MsgPack::package selectMessagesByParameters(const std::string &returnAddress,
-                                            const std::string &source = "", int64_t sa = -1,
-                                            int64_t da = -1, int32_t type = -1, int32_t status = -1,
-                                            const std::string &channel = "");
+MsgPack::package selectMessagesByParameters(const std::string& source, int64_t sa, int64_t da, int32_t type,
+                                            int32_t status, const std::string& channel,
+                                            const std::string& returnAddress = "");
 
 /**
  * @brief Сформировать запрос на удаление всех сообщений
@@ -65,21 +64,20 @@ MsgPack::package selectMessagesByParameters(const std::string &returnAddress,
  * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @return MsgPack::package
  **/
-MsgPack::package deleteAll(const std::string &returnAddress);
+MsgPack::package deleteAll(const std::string &returnAddress = "");
 
 /**
  * @brief Сформировать запрос на удаление сообщения по его mid
  *
- * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @param mid уникальный идентификатор сообщения
+ * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @return MsgPack::package
  **/
-MsgPack::package deleteMessage(const std::string &returnAddress, int32_t mid);
+MsgPack::package deleteMessage(int32_t mid, const std::string& returnAddress = "");
 
 /**
  * @brief Сформировать запрос на удаление устаревших сообщений
  *
- * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @param amount максимальное допустипое количество оставшихся наиболее свежих сообщений
  * @param source тип источника сообщения ("" - не учитывается)
  * @param sa номер устройства-источника сообщения в системе (-1 - не учитывается)
@@ -87,33 +85,33 @@ MsgPack::package deleteMessage(const std::string &returnAddress, int32_t mid);
  * @param type тип данных сообщения (-1 - не учитывается)
  * @param status тип сообщения (-1 - не учитывается)
  * @param channel имя канала связи ("" - не учитывается)
+ * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @return MsgPack::package
  **/
-MsgPack::package deleteOldMessages(const std::string &returnAddress, unsigned amount = 0,
-                                   const std::string &source = "", int64_t sa = -1,
-                                   int64_t da = -1, int32_t type = -1, int32_t status = -1,
-                                   const std::string &channel = "");
+MsgPack::package deleteOldMessages(unsigned int amount, const std::string& source, int64_t sa,
+                                   int64_t da, int32_t type, int32_t status,
+                                   const std::string& channel, const std::string& returnAddress = "");
 
 /**
  * @brief Сформировать запрос на обновление типа сообщения
  *
- * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @param mid уникальный идентификатор сообщения
  * @param status новый тип
+ * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @return MsgPack::package
  **/
-MsgPack::package updateStatus(const std::string &returnAddress, int32_t mid, int32_t status);
+MsgPack::package updateStatus(int32_t mid, int32_t status, const std::string& returnAddress = "");
 
 /**
  * @brief Сформировать запрос на обновление канала связи сообщения
  *
- * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @param mid уникальный идентификатор сообщения
  * @param channel новый канал связи
+ * @param returnAddress обратный адрес в системе IPC для ответного сообщения
  * @return MsgPack::package
  **/
-MsgPack::package updateChannel(const std::string &returnAddress, int32_t mid,
-                               const std::string &channel);
+MsgPack::package updateChannel(int32_t mid, const std::string& channel,
+                               const std::string& returnAddress = "");
 
 }
 
