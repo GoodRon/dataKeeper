@@ -8,7 +8,7 @@
 
 #include <string>
 
-#include "types.h"
+#include "MsgPack_types.h"
 
 namespace journal_db {
 

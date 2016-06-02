@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(dataKeeper)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake/")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 add_definitions(-Wall -Wextra -Wno-unknown-pragmas)
@@ -28,16 +28,7 @@ include_directories(include)
 include_directories(plugins)
 include_directories(plugins/messages)
 include_directories(plugins/journal)
-include_directories(libMsgPack)
-include_directories(libMsgPack/common)
-include_directories(libMsgPack/include)
-include_directories(libMsgPack/MsgPack)
-include_directories(libZmqIpc/include)
-include_directories(libZmqIpc/ipc)
-include_directories(libZmqIpc/src)
 
-add_subdirectory(libMsgPack)
-add_subdirectory(libZmqIpc)
 add_subdirectory(plugins)
 
 add_subdirectory(tests)
