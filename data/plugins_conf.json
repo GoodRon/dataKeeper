@@ -1,0 +1,24 @@
+{
+  "plugins": [
+    {
+      "dir": "../lib/",
+      "database": "messages",
+      "type": "sqlite",
+
+      "filename": "messages.db",
+      "create": true,
+      "read only": false,
+      "options file": ""
+    },
+    {
+      "dir": "../lib/",
+      "database": "journal",
+      "type": "sqlite",
+
+      "filename": "journal.db",
+      "create": true,
+      "read only": false,
+      "options file": ""
+    }
+  ]
+}
