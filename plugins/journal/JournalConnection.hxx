@@ -15,6 +15,11 @@
  **/
 class JournalConnection : public AbstractConnection {
 public:
+    /**
+    * @brief Конструктор
+    *
+    * @param jsonConf содержание конфигурационного файла в формате json
+    **/
     JournalConnection(const std::string& jsonConf);
 
     /**
@@ -35,19 +40,53 @@ protected:
     virtual void instantiateDatabase();
 
 private:
-
+    /**
+     * @brief Обработать запрос на добавление записи
+     *
+     * @param request пакет запроса
+     * @param answer сформированный ответ
+     * @return bool
+     */
     bool insertRecord(const MsgPack::MsgPackVariantMap& request,
                       MsgPack::MsgPackVariantMap& answer);
 
+    /**
+     * @brief Обработать запрос на удаление всех записей
+     *
+     * @param request пакет запроса
+     * @param answer сформированный ответ
+     * @return bool
+     */
     bool deleteAll(const MsgPack::MsgPackVariantMap& request,
                    MsgPack::MsgPackVariantMap& answer);
 
+    /**
+     * @brief Обработать запрос на удаление устаревших записей
+     *
+     * @param request пакет запроса
+     * @param answer сформированный ответ
+     * @return bool
+     */
     bool deleteOldRecords(const MsgPack::MsgPackVariantMap& request,
                           MsgPack::MsgPackVariantMap& answer);
 
+    /**
+     * @brief Обработать параметризированный запрос на удаление устаревших записей
+     *
+     * @param request пакет запроса
+     * @param answer сформированный ответ
+     * @return bool
+     */
     bool selectRecordsByParameters(const MsgPack::MsgPackVariantMap& request,
                                    MsgPack::MsgPackVariantMap& answer);
 
+    /**
+     * @brief Обработать запрос на выдачу записи по mid
+     *
+     * @param request пакет запроса
+     * @param answer сформированный ответ
+     * @return bool
+     */
     bool selectRecordByMid(const MsgPack::MsgPackVariantMap& request,
                            MsgPack::MsgPackVariantMap& answer);
 };
