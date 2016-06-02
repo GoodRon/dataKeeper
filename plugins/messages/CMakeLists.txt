@@ -4,7 +4,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/")
 find_package(ODB REQUIRED OPTIONAL_COMPONENTS sqlite pgsql mysql)
 include(${ODB_USE_FILE})
 
-foreach(database pgsql sqlite mysql)
+foreach(database ${DB_PLUGIN_LIST} )
     set(DATABASE_DEFS)
 
     if (${database} STREQUAL sqlite)

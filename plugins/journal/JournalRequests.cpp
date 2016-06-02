@@ -34,7 +34,7 @@ MsgPack::package insertRecord(const std::string &returnAddress, int32_t sa,
     request["request"] = "insertRecord";
     request["sa"] = sa;
     request["da"] = da;
-    request["toper"] = toper;
+    request["toper"] = static_cast<int>(toper);
     request["oper"] = oper;
 
     msg[asUserSection] = request;
@@ -98,8 +98,8 @@ MsgPack::package selectRecordsByParameters(const std::string &returnAddress,
     request["request"] = "selectRecordsByParameters";
     request["sa"] = sa;
     request["da"] = da;
-    request["topermin"] = topermin;
-    request["topermax"] = topermax;
+    request["topermin"] = static_cast<int>(topermin);
+    request["topermax"] = static_cast<int>(topermax);
 
     msg[asUserSection] = request;
     return msg.getPackage();
